@@ -4,6 +4,7 @@ import './globals.css'
 import { Analytics } from '@vercel/analytics/react'
 import { getProfile } from '@/lib/getProfile'
 import { SkipLink } from '@/components/SkipLink'
+import { ScrollToTop } from '@/components/ScrollToTop'
 
 const { profile } = getProfile()
 
@@ -61,6 +62,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
         <SkipLink />
         {children}
+        <ScrollToTop />
         <Analytics />
       </body>
     </html>
