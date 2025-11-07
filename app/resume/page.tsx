@@ -168,7 +168,7 @@ export default function ResumePage() {
               <div className="p-12 text-center">
                 <div className="mb-6">
                   <FileText className="w-16 h-16 text-muted mx-auto mb-4" />
-                  <p className="text-lg text-text mb-2">Your browser doesn't support PDF embedding.</p>
+                  <p className="text-lg text-text mb-2">Your browser doesn&apos;t support PDF embedding.</p>
                   <p className="text-sm text-muted">Please download the PDF to view it.</p>
                 </div>
                 <a

@@ -2,6 +2,7 @@ import { ImageResponse } from 'next/og'
 import { getProfile } from '@/lib/getProfile'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const { profile } = getProfile()

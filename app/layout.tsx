@@ -24,6 +24,12 @@ const manrope = Manrope({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000')
+  ),
   title: `${profile.name} | ${profile.title}`,
   description: profile.summary.join(' '),
   openGraph: {

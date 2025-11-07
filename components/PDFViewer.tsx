@@ -17,11 +17,12 @@ export default function PDFViewer() {
     iframe.title = 'Resume PDF'
     iframe.setAttribute('aria-label', 'Resume PDF viewer')
 
-    containerRef.current.appendChild(iframe)
+    const container = containerRef.current
+    container.appendChild(iframe)
 
     return () => {
-      if (containerRef.current && iframe.parentNode) {
-        containerRef.current.removeChild(iframe)
+      if (container && iframe.parentNode) {
+        container.removeChild(iframe)
       }
     }
   }, [])
