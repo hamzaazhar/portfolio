@@ -1,0 +1,259 @@
+{
+  "name": "Rana Muhammad Hamza",
+  "title": "Senior Data Scientist & Digital Transformation Specialist",
+  "branding": {
+    "identity": "Digital Transformation & Decision Intelligence Lead"
+  },
+  "hero": {
+    "headline": "Digital Transformation & Decision Intelligence Lead",
+    "subhead": "I design AI-driven systems that remove operational friction and enable real-time execution across manufacturing teams.",
+    "microProof": "Predictive intelligence, workflow automation, and decision systems that make operations measurable and manageable.",
+    "metrics": [
+      {
+        "label": "70% reduction in HR workload",
+        "value": "70%"
+      },
+      {
+        "label": "15% reduction in machine downtime",
+        "value": "15%"
+      },
+      {
+        "label": "3–4 days faster sampling",
+        "value": "3–4 days"
+      }
+    ],
+    "ctas": {
+      "primary": {
+        "text": "See Case Studies",
+        "href": "#work"
+      },
+      "secondary": {
+        "text": "Discuss Your Environment",
+        "href": "#contact"
+      }
+    }
+  },
+  "pillars": [
+    {
+      "title": "Operational Flow Design",
+      "statement": "I redesign end-to-end workflows to eliminate bottlenecks and manual dependencies."
+    },
+    {
+      "title": "Predictive Decision Systems",
+      "statement": "I convert real-time signals into forward-biased decisions using ML and analytical systems."
+    },
+    {
+      "title": "Cross-Functional Execution",
+      "statement": "I work across Sales, HR, Production, IT, and Leadership to land change that sticks."
+    }
+  ],
+  "caseStudies": [
+    {
+      "title": "Machine Health + RCA Decision Engine",
+      "context": "Unplanned stoppages lacked diagnosis clarity.",
+      "built": "Combined stop-logs, locator history, and time-series signals into a generative RCA + machine health scoring engine.",
+      "outcome": "Reduced unplanned downtime by ~15%.",
+      "stack": ["Python", "SQL Server", "MongoDB", "Tableau"]
+    },
+    {
+      "title": "Sampling Recommendation System",
+      "context": "Sampling decisions were manual and delayed.",
+      "built": "ML similarity model to recommend optimal product configurations.",
+      "outcome": "Reduced sampling cycle by 3–4 days.",
+      "stack": ["Python", "Scikit-learn", "PostgreSQL"]
+    },
+    {
+      "title": "HR Workflow Automation + Reporting Layer",
+      "context": "Weekly/Monthly HR reporting required manual consolidation.",
+      "built": "Automated approval & reporting pipelines integrated with Power BI dashboards.",
+      "outcome": "~70% reduction in HR workload.",
+      "stack": ["Python", "Power BI", "SQL"]
+    }
+  ],
+  "expertiseClusters": [
+    {
+      "title": "Decision Systems",
+      "items": ["ML Modeling", "Time-Series Forecasting", "Similarity Models", "Generative AI"]
+    },
+    {
+      "title": "Data Fabric & Integration",
+      "items": ["PostgreSQL", "MSSQL", "Oracle DB2", "Kafka", "MongoDB"]
+    },
+    {
+      "title": "Operational Intelligence & Dashboards",
+      "items": ["Tableau", "Power BI", "KPI System Design", "Operational Dashboards"]
+    }
+  ],
+  "growthTimeline": [
+    {
+      "year": "2020",
+      "label": "Built dashboards & ML models"
+    },
+    {
+      "year": "2021",
+      "label": "Designed automation pipelines across Sales, HR, Production"
+    },
+    {
+      "year": "2022",
+      "label": "Centralized distributed databases into a unified warehouse"
+    },
+    {
+      "year": "2023",
+      "label": "Delivered machine health + RCA generative AI engine"
+    },
+    {
+      "year": "2024",
+      "label": "Leading decision intelligence and transformation initiatives end-to-end"
+    }
+  ],
+  "contactCopy": {
+    "heading": "Discuss Operational Friction and System Design",
+    "subtext": "If your organization needs clearer visibility, automated workflows, or predictive intelligence systems, let's talk."
+  },
+  "summary": [
+    "Senior Data Scientist & Digital Transformation Specialist with 5+ years' experience in AI/ML, Predictive Analytics, and Business Intelligence.",
+    "Proven record of delivering measurable impact: cutting product lead-times by 3–4 days, reducing HR workload by 70%, and lowering machine downtime by 15%.",
+    "Skilled in multi-database integration, Generative AI, and real-time dashboards across manufacturing, HR, and sales functions. UK-educated (MSc, Queen Mary London) with certifications from McKinsey, LUMS, and Institute of Strategic Intelligence."
+  ],
+  "contact": {
+    "phone": "+923147214134",
+    "email": "hamzaazhar17@outlook.com",
+    "linkedin": "https://www.linkedin.com/in/rana-muhammad-hamza/"
+  },
+  "skills": {
+    "methodologies": [
+      "Design Thinking",
+      "Digital Transformation",
+      "HR & Finance Analytics",
+      "Predictive Analytics",
+      "Stakeholder Management",
+      "Workflow Automation"
+    ],
+    "techniques": [
+      "Data Visualization",
+      "Generative AI",
+      "Kafka Pipelines",
+      "KPI Analytics",
+      "Machine Learning",
+      "Predictive Modeling",
+      "Robotics Process Automation",
+      "Similarity Model",
+      "Time Series Forecasting",
+      "Web Scrapping",
+      "Zero-Shot Learning"
+    ],
+    "tools": [
+      "Asana",
+      "Figma",
+      "Microsoft Excel",
+      "Microsoft Power BI",
+      "Python",
+      "SQL (Oracle-DB2-MS SQL-PostgreSQL)",
+      "Tableau"
+    ]
+  },
+  "experience": [
+    {
+      "company": "Interloop Limited",
+      "location": "Faisalabad, Punjab, Pakistan",
+      "roles": [
+        {
+          "title": "Senior Data Scientist",
+          "start": "2024-07",
+          "end": "present",
+          "bullets": [
+            "Partner with Sales, HR, and Operations teams to deliver predictive analytics and BI solutions for strategic decision-making.",
+            "Designed forecasting models and enterprise dashboards to support planning and efficiency.",
+            "Unified data from Oracle, DB2, and MS SQL into a centralized PostgreSQL warehouse, delivering Tableau dashboards for SLA tracking and forecasting → improved sales order planning efficiency by 25%.",
+            "Built a Generative AI recommendation engine combining machine health scores with downtime and maintenance trends → reduced unplanned downtime by 15%."
+          ]
+        },
+        {
+          "title": "Data Scientist",
+          "start": "2020-02",
+          "end": "2024-07",
+          "bullets": [
+            "Designed AI-driven systems and BI dashboards to improve production, HR, and customer-facing processes.",
+            "Collaborated with HR & Operations on automation and compliance initiatives.",
+            "Developed an ML-based recommendation engine for product sampling → reduced lead-time by 3–4 days.",
+            "Built a similarity-model search platform → improved material selection efficiency by 30%.",
+            "Implemented a Zero-Shot NLP system with Kafka pipelines → processed 10k+ customer reviews, delivering actionable product insights.",
+            "Created a Tableau dashboard for 300+ knitting machines → improved OEE visibility and proactive control.",
+            "Delivered Python automation pipelines integrated with a Power BI dashboard → cut HR workload by 70% and reduced reporting errors by 40%."
+          ]
+        }
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Masters in Computer Science",
+      "institution": "Queen Mary University of London",
+      "start": "2017-01",
+      "end": "2018-12",
+      "location": "United Kingdom"
+    },
+    {
+      "degree": "Bachelors in Computer Science",
+      "institution": "National University of Computer and Emerging Sciences",
+      "start": "2012-01",
+      "end": "2016-12",
+      "location": "Pakistan"
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Sales Negotiation",
+      "issuer": "LinkedIn",
+      "date": "2025-05"
+    },
+    {
+      "title": "Develop Your Customer Service Skills",
+      "issuer": "LinkedIn",
+      "date": "2025-05"
+    },
+    {
+      "title": "Mastering Productivity with AI & Digital Excellence",
+      "issuer": "Institute of Strategic Intelligence",
+      "date": "2025-02"
+    },
+    {
+      "title": "McKinsey Forward Program",
+      "issuer": "McKinsey & Company",
+      "date": "2024-04"
+    },
+    {
+      "title": "Fundamentals of Data Analytics",
+      "issuer": "Lahore University of Management Sciences",
+      "date": "2021-06"
+    },
+    {
+      "title": "Data Science & Machine Learning Using Python",
+      "issuer": "Lahore University of Management Sciences",
+      "date": "2021-03"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Pub-Ve (Dissertation)",
+      "description": "Developed a recommendation system for academic publication venues using TF-IDF + Cosine Similarity with a PyQt interface.",
+      "start": "2018-05",
+      "end": "2018-08",
+      "institution": "Queen Mary University of London",
+      "tags": ["Python", "TF-IDF", "Cosine Similarity", "PyQt", "NLP"]
+    }
+  ],
+  "volunteering": [
+    {
+      "organization": "Host Staffing",
+      "role": "Customer Liaison",
+      "start": "2017-01",
+      "end": "2018-01",
+      "location": "London",
+      "bullets": [
+        "Supported major events (football matches, concerts, charity events), enhancing client experience."
+      ]
+    }
+  ]
+}
+

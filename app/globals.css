@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Design tokens - WCAG AA compliant */
+  --bg: #FAF8F3;
+  --surface: #FFFFFF;
+  --text: #111111;
+  --muted: #6B7280;
+  --accent: #FFC857;
+  --accent2: #6C63FF;
+  --border: #E7E2D9;
+  
+  /* Legacy support */
+  --color-bg-light: var(--bg);
+  --color-bg-dark: #1a1a1a;
+  --color-bg: var(--bg);
+  --color-bg-muted: #F5F5F0;
+  --color-fg: var(--text);
+  --color-fg-muted: var(--muted);
+  --color-accent-yellow: var(--accent);
+  --color-accent-purple: var(--accent2);
+  --color-accent-red: #F87171;
+  --color-accent: var(--accent);
+  --color-card: var(--surface);
+  --color-card-border: var(--border);
+  
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.12);
+  
+  /* Z-index */
+  --z-header: 100;
+  --z-modal: 1000;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--color-fg);
+  background: var(--color-bg);
+  min-height: 100vh;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: text;
+  cursor: default;
+}
+
+/* Ensure proper cursor behavior */
+a, button, [role="button"] {
+  cursor: pointer;
+}
+
+input, textarea, select {
+  cursor: text;
+}
+
+/* Prevent edit cursor and focus on non-editable elements */
+h1, h2, h3, h4, h5, h6, p, span, div, li, section, article {
+  cursor: default;
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Remove focus outline and caret from non-interactive elements */
+h1:focus, h2:focus, h3:focus, h4:focus, h5:focus, h6:focus, 
+p:focus, span:focus, div:focus, li:focus, section:focus {
+  outline: none;
+  caret-color: transparent;
+}
+
+/* Only show text cursor on hover for selection */
+h1:hover, h2:hover, h3:hover, h4:hover, h5:hover, h6:hover, p:hover {
+  cursor: text;
+}
+
+/* Prevent caret from appearing on click */
+*:not(input):not(textarea):not([contenteditable="true"]) {
+  caret-color: transparent;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 2px;
+}
+
+/* Hover darken 6-8% */
+button:hover:not(:disabled),
+a:hover:not(:disabled) {
+  filter: brightness(0.93);
+  transition: filter 120ms ease;
+}
+
+/* Skip to content link - visually hidden until focus */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent2);
+  color: var(--surface);
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: calc(var(--z-modal) + 1);
+  border-radius: var(--radius-sm);
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.skip-link:focus {
+  top: 0;
+  clip: auto;
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Reduce motion for reveals */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Print stylesheet */
+@media print {
+  /* Hide header, footer, and navigation */
+  nav,
+  footer,
+  .skip-link {
+    display: none !important;
+  }
+
+  /* Ensure PDF fits A4 */
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Show only PDF content */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide buttons and controls */
+  button,
+  a[href^="#"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure PDF viewer prints */
+  iframe,
+  embed,
+  object {
+    width: 100% !important;
+    height: 100vh !important;
+    border: none !important;
+  }
+}
+
