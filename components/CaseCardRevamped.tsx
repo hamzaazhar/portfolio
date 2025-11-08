@@ -193,10 +193,11 @@ export function CaseCardRevamped({
               config.border,
               config.bg,
               'group-hover:border-opacity-60 transition-all duration-300',
-              'mb-3 md:mb-4'
+              'mb-3 md:mb-4',
+              'min-h-[4rem] md:min-h-[4.5rem]'
             )}
           >
-            <div className="flex items-center gap-2 md:gap-2.5">
+            <div className="flex items-center gap-2 md:gap-2.5 h-full">
               <div className={cn(
                 'w-7 h-7 md:w-8 md:h-8 rounded-md flex items-center justify-center flex-shrink-0',
                 'bg-gradient-to-br',
@@ -204,7 +205,7 @@ export function CaseCardRevamped({
               )}>
                 <TrendingUp className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" strokeWidth={2.5} />
               </div>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1 min-w-0 flex items-center">
                 <p className="text-white font-bold text-sm md:text-base leading-tight">
                   {outcome}
                 </p>

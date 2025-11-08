@@ -30,7 +30,7 @@ export function ValuePillars({ pillars }: ValuePillarsProps) {
   }, [])
 
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-8 items-start">
       {pillars.map((pillar, index) => {
         const { Icon, color, iconColor, borderColor } = pillarIcons[index % 3]
         return (
@@ -45,12 +45,12 @@ export function ValuePillars({ pillars }: ValuePillarsProps) {
           >
             <div className={cn(
               'relative h-full p-8 rounded-xl bg-surface border-2 transition-all duration-300',
-              'hover:shadow-xl',
+              'hover:shadow-xl flex flex-col',
               borderColor
             )}>
               {/* Icon with gradient background */}
               <div className={cn(
-                'w-16 h-16 rounded-xl bg-gradient-to-br mb-6 flex items-center justify-center',
+                'w-16 h-16 rounded-xl bg-gradient-to-br mb-6 flex items-center justify-center flex-shrink-0',
                 'border-2',
                 color,
                 borderColor
@@ -59,8 +59,8 @@ export function ValuePillars({ pillars }: ValuePillarsProps) {
               </div>
 
               {/* Content */}
-              <div className="space-y-4">
-                <h3 className="text-xl md:text-2xl font-heading font-bold text-text leading-tight">
+              <div className="flex flex-col flex-1">
+                <h3 className="text-xl md:text-2xl font-heading font-bold text-text leading-tight mb-4" style={{ minHeight: '3.5rem' }}>
                   {pillar.title}
                 </h3>
                 <p className="text-muted leading-relaxed" style={{ fontSize: 'clamp(14px, 1.2vw, 16px)', lineHeight: 1.7 }}>
