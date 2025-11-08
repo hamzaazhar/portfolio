@@ -59,6 +59,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   user-select: text;
   cursor: default;
+  /* iOS animation performance */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
 }
 
 /* Ensure proper cursor behavior */
@@ -158,6 +163,23 @@ a:hover:not(:disabled) {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* iOS animation performance optimizations */
+[data-framer-component],
+[motion] {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize framer-motion animations for iOS */
+[data-framer-name] {
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Print stylesheet */
