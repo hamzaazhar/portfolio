@@ -99,9 +99,11 @@ export function Section({
   )
 
   function renderContent() {
-    const revealDuration = prefersReducedMotion ? 0.06 : 0.28
-    const revealEase = prefersReducedMotion ? [0, 0, 1, 1] : [0.2, 0.7, 0.2, 1]
-    const staggerDelay = prefersReducedMotion ? 0 : 0.04
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    const revealDuration = prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.2)
+    const revealEase = prefersReducedMotion ? [0, 0, 1, 1] : (isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1])
+    const staggerDelay = prefersReducedMotion ? 0 : (isIOS ? 0.01 : 0.02)
 
     return (
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-reveal={hasAnimated}>

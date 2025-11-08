@@ -27,12 +27,21 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
     setPrefersReducedMotion(mediaQuery.matches)
   }, [])
 
-  const gridDuration = prefersReducedMotion ? MOTION.duration.reduced : 0.22
-  const h1Delay = prefersReducedMotion ? 0 : 0.1
-  const subheadDelay = prefersReducedMotion ? 0 : 0.2
-  const metricsDelay = prefersReducedMotion ? 0 : 0.3
-  const ctaDelay = prefersReducedMotion ? 0 : 0.4
-  const staggerDelay = prefersReducedMotion ? 0 : MOTION.stagger.default
+  const [isIOS, setIsIOS] = useState(false)
+  
+  useEffect(() => {
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    setIsIOS(isIOSDevice)
+  }, [])
+
+  // Faster animations for iOS
+  const gridDuration = prefersReducedMotion ? MOTION.duration.reduced : (isIOS ? 0.15 : 0.22)
+  const h1Delay = prefersReducedMotion ? 0 : (isIOS ? 0.05 : 0.1)
+  const subheadDelay = prefersReducedMotion ? 0 : (isIOS ? 0.1 : 0.2)
+  const metricsDelay = prefersReducedMotion ? 0 : (isIOS ? 0.15 : 0.3)
+  const ctaDelay = prefersReducedMotion ? 0 : (isIOS ? 0.2 : 0.4)
+  const staggerDelay = prefersReducedMotion ? 0 : (isIOS ? MOTION.stagger.ios : MOTION.stagger.default)
 
   return (
     <div className="relative min-h-screen flex items-start justify-center overflow-hidden">
@@ -84,9 +93,9 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
-            duration: prefersReducedMotion ? 0.06 : 0.5, 
+            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.2 : 0.4), 
             delay: h1Delay,
-            ease: [0.2, 0.7, 0.2, 1]
+            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
           className="font-heading font-bold text-text"
           style={{ 
@@ -103,9 +112,9 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
-            duration: prefersReducedMotion ? 0.06 : 0.4, 
+            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.3), 
             delay: subheadDelay,
-            ease: [0.2, 0.7, 0.2, 1]
+            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
           className="text-xl md:text-2xl lg:text-3xl font-medium text-text leading-relaxed mx-auto"
           style={{ 
@@ -186,9 +195,9 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ 
-            duration: prefersReducedMotion ? 0.06 : 0.3, 
-            delay: subheadDelay + (prefersReducedMotion ? 0 : 0.1),
-            ease: [0.2, 0.7, 0.2, 1]
+            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.25), 
+            delay: subheadDelay + (prefersReducedMotion ? 0 : (isIOS ? 0.05 : 0.1)),
+            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
           className="text-base md:text-lg text-muted max-w-3xl mx-auto"
           style={{ fontSize: 'clamp(16px, 1.4vw, 18px)', lineHeight: 1.6 }}
@@ -201,9 +210,9 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
-            duration: prefersReducedMotion ? 0.06 : 0.4, 
+            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.3), 
             delay: metricsDelay,
-            ease: [0.2, 0.7, 0.2, 1]
+            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
           className="grid md:grid-cols-3 gap-3 md:gap-4 pt-5 md:pt-6 pb-2 max-w-6xl mx-auto w-full"
         >
@@ -223,9 +232,9 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ 
-            duration: prefersReducedMotion ? 0.06 : 0.4, 
+            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.3), 
             delay: ctaDelay,
-            ease: [0.2, 0.7, 0.2, 1]
+            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-5 md:pt-6"
         >

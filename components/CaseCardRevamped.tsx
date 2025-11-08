@@ -52,11 +52,15 @@ export function CaseCardRevamped({
   delay = 0,
 }: CaseCardRevampedProps) {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
   const config = accentConfig[accentColor]
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     setPrefersReducedMotion(mediaQuery.matches)
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+    setIsIOS(isIOSDevice)
   }, [])
 
   return (
@@ -65,14 +69,14 @@ export function CaseCardRevamped({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ 
-        duration: prefersReducedMotion ? 0.06 : 0.4, 
-        delay: prefersReducedMotion ? 0 : delay,
-        ease: [0.2, 0.7, 0.2, 1]
+        duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.15 : 0.3), 
+        delay: prefersReducedMotion ? 0 : (isIOS ? delay * 0.5 : delay),
+        ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
       }}
       className="h-full group flex"
     >
       <div className={cn(
-        'relative h-full w-full rounded-xl border-2 transition-all duration-500 overflow-hidden flex flex-col',
+        'relative h-full w-full rounded-xl border-2 transition-all duration-300 overflow-hidden flex flex-col',
         'bg-gradient-to-br from-white/[0.05] to-white/[0.02]',
         'backdrop-blur-sm',
         config.border,
