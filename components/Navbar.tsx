@@ -322,7 +322,8 @@ export function Navbar() {
       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         body.style.height = '100%'
         body.style.position = 'fixed'
-        body.style.webkitOverflowScrolling = 'touch'
+        // Use type assertion for webkit-specific property
+        ;(body.style as any).webkitOverflowScrolling = 'touch'
       }
       
       return () => {
@@ -338,7 +339,7 @@ export function Navbar() {
         // iOS specific cleanup
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
           body.style.height = ''
-          body.style.webkitOverflowScrolling = ''
+          ;(body.style as any).webkitOverflowScrolling = ''
         }
         
         // Restore scroll position

@@ -45,9 +45,14 @@ export function supportsPassiveListeners(): boolean {
         passiveSupported = true
         return false
       }
-    }
-    window.addEventListener('test', null as any, options)
-    window.removeEventListener('test', null as any, options)
+    } as AddEventListenerOptions
+    
+    // Use type assertion to bypass strict type checking for test event
+    const testEvent = 'test' as keyof WindowEventMap
+    const nullListener = null as any
+    
+    window.addEventListener(testEvent, nullListener, options)
+    window.removeEventListener(testEvent, nullListener, options)
   } catch (err) {
     passiveSupported = false
   }
