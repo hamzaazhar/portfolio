@@ -31,7 +31,7 @@ export function Card({ children, className, hover = true, accentColor = 'yellow'
         'bg-surface border border-border rounded-xl',
         'p-6 md:p-8',
         'transition-all duration-200',
-        hover && 'hover:shadow-lg hover:border-accent/30',
+        hover && 'card-3d-hover hover:shadow-lg hover:border-accent/30',
         className
       )}
     >

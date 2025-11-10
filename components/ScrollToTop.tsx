@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { throttleScroll, getScrollPosition } from '@/lib/scrollUtils'
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false)
@@ -11,17 +12,18 @@ export function ScrollToTop() {
   useEffect(() => {
     const toggleVisibility = () => {
       // Show button when page is scrolled down 300px or more
-      if (window.scrollY > 300) {
+      if (getScrollPosition() > 300) {
         setIsVisible(true)
       } else {
         setIsVisible(false)
       }
     }
 
-    window.addEventListener('scroll', toggleVisibility)
+    const throttledHandler = throttleScroll(toggleVisibility)
+    window.addEventListener('scroll', throttledHandler)
 
     return () => {
-      window.removeEventListener('scroll', toggleVisibility)
+      window.removeEventListener('scroll', throttledHandler)
     }
   }, [])
 

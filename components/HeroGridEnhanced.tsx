@@ -88,23 +88,43 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
       />
 
       <div className="relative z-10 text-center space-y-5 md:space-y-6 max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 pt-32 md:pt-40 pb-8 md:pb-12">
-        {/* H1 Headline */}
+        {/* H1 Headline - Word by word stagger animation */}
         <motion.h1
-          initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ 
-            duration: prefersReducedMotion ? 0.06 : (isIOS ? 0.2 : 0.4), 
-            delay: h1Delay,
-            ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
-          }}
           className="font-heading font-bold text-text"
           style={{ 
             fontSize: 'clamp(44px, 5vw, 72px)',
             lineHeight: 1.08,
             letterSpacing: '-0.01em'
           }}
+          initial="hidden"
+          animate="visible"
+          variants={{ 
+            visible: { 
+              transition: { 
+                staggerChildren: prefersReducedMotion ? 0 : (isIOS ? 0.05 : 0.08) 
+              } 
+            } 
+          }}
         >
-          {headline}
+          {headline.split(' ').map((word, index) => (
+            <motion.span
+              key={index}
+              variants={{
+                hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 20 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    duration: prefersReducedMotion ? 0.01 : (isIOS ? 0.2 : 0.5),
+                    ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
+                  }
+                }
+              }}
+              className="inline-block mr-2 sm:mr-4"
+            >
+              {word}
+            </motion.span>
+          ))}
         </motion.h1>
 
         {/* Subhead */}

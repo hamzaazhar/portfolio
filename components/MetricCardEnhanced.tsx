@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Card } from './Card'
 import { useState, useEffect } from 'react'
 import { getMotionProps } from '@/lib/motion'
+import { AnimatedCounter } from './AnimatedCounter'
 
 interface MetricCardProps {
   value: string
@@ -41,25 +42,47 @@ export function MetricCard({ value, label, accentColor = 'yellow', delay = 0 }: 
     red: 'bg-accent-red'
   }
 
-  // Parse value to separate number and unit (e.g., "3-4 days" -> "3-4" and "days")
+  // Parse value to separate number and unit (e.g., "3-4 days" -> "3-4" and "days", "70%" -> 70 and "%")
   const parseValue = (val: string) => {
+    // Check for percentage
+    if (val.includes('%')) {
+      const numMatch = val.match(/(\d+)/)
+      if (numMatch) {
+        return { number: parseInt(numMatch[1], 10), unit: '%', isNumber: true }
+      }
+      return { number: val, unit: null, isNumber: false }
+    }
+    
     // Check if value ends with common units
     const unitPattern = /\s+(days?|hours?|months?|years?|weeks?)$/i
     const match = val.match(unitPattern)
     if (match) {
-      const number = val.substring(0, match.index).trim()
+      const numberStr = val.substring(0, match.index).trim()
       const unit = match[0].trim()
-      return { number, unit }
+      // Check if it's a range like "3-4"
+      const rangeMatch = numberStr.match(/(\d+)-(\d+)/)
+      if (rangeMatch) {
+        return { number: numberStr, unit, isNumber: false }
+      }
+      // Try to parse as number
+      const num = parseInt(numberStr, 10)
+      if (!isNaN(num)) {
+        return { number: num, unit, isNumber: true }
+      }
+      return { number: numberStr, unit, isNumber: false }
     }
-    // Check for percentage
-    if (val.includes('%')) {
-      return { number: val, unit: null }
+    
+    // Try to extract number from string
+    const numMatch = val.match(/(\d+)/)
+    if (numMatch) {
+      return { number: parseInt(numMatch[1], 10), unit: null, isNumber: true }
     }
-    // No unit found
-    return { number: val, unit: null }
+    
+    // No unit found, not a number
+    return { number: val, unit: null, isNumber: false }
   }
 
-  const { number, unit } = parseValue(value)
+  const { number, unit, isNumber } = parseValue(value)
 
   return (
     <motion.div
@@ -86,34 +109,70 @@ export function MetricCard({ value, label, accentColor = 'yellow', delay = 0 }: 
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: delay + 0.1, ease: [0.2, 0.7, 0.2, 1] }}
           >
-            <span
-              className="font-heading font-black"
-              style={{ 
-                fontSize: 'clamp(42px, 5.5vw, 80px)', 
-                lineHeight: 1,
-                background: gradientStyles[accentColor].background,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              {number}
-            </span>
-            {unit && (
-              <span
-                className="font-heading font-bold"
-                style={{ 
-                  fontSize: 'clamp(28px, 3.5vw, 56px)', 
-                  lineHeight: 1,
-                  background: gradientStyles[accentColor].background,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  opacity: 0.85,
-                }}
-              >
-                {unit}
-              </span>
+            {isNumber && typeof number === 'number' ? (
+              <>
+                <span
+                  className="font-heading font-black"
+                  style={{ 
+                    fontSize: 'clamp(42px, 5.5vw, 80px)', 
+                    lineHeight: 1,
+                    background: gradientStyles[accentColor].background,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  <AnimatedCounter from={0} to={number} />
+                </span>
+                {unit && (
+                  <span
+                    className="font-heading font-bold"
+                    style={{ 
+                      fontSize: 'clamp(28px, 3.5vw, 56px)', 
+                      lineHeight: 1,
+                      background: gradientStyles[accentColor].background,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      opacity: 0.85,
+                    }}
+                  >
+                    {unit}
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                <span
+                  className="font-heading font-black"
+                  style={{ 
+                    fontSize: 'clamp(42px, 5.5vw, 80px)', 
+                    lineHeight: 1,
+                    background: gradientStyles[accentColor].background,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {number}
+                </span>
+                {unit && (
+                  <span
+                    className="font-heading font-bold"
+                    style={{ 
+                      fontSize: 'clamp(28px, 3.5vw, 56px)', 
+                      lineHeight: 1,
+                      background: gradientStyles[accentColor].background,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      opacity: 0.85,
+                    }}
+                  >
+                    {unit}
+                  </span>
+                )}
+              </>
             )}
           </motion.div>
           <motion.div 

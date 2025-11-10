@@ -14,6 +14,7 @@ import { ContactForm } from '@/components/ContactForm'
 import { Card } from '@/components/Card'
 import { GeometricShape } from '@/components/GeometricShape'
 import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { SectionDivider } from '@/components/SectionDivider'
 import { motion } from 'framer-motion'
 import type { Profile } from '@/types/profile'
 
@@ -136,6 +137,8 @@ export default function Home() {
             ctas={profile.hero.ctas}
           />
         </Section>
+
+        <SectionDivider color="light" />
 
         {/* Value Section - Value Pillars Only */}
         <Section id="value" variant="light" accent="yellow" eyebrow="How I Create Impact" spacing={{ top: 48, bottom: 40 }}>
@@ -285,6 +288,8 @@ export default function Home() {
             </div>
           </div>
         </Section>
+
+        <SectionDivider color="dark" />
 
         {/* Contact Section - Dark */}
         <Section id="contact" variant="dark" accent="purple" eyebrow="Contact" spacing={{ top: 40, bottom: 40 }} className="relative overflow-hidden">
