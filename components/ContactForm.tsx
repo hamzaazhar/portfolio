@@ -19,8 +19,6 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
   const [errorMessage, setErrorMessage] = useState('')
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || ''
-
   const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   }
@@ -54,28 +52,17 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
       return
     }
 
-    if (!WEB3FORMS_ACCESS_KEY) {
-      setStatus('error')
-      setErrorMessage('Form configuration error. Please contact the site administrator.')
-      setToast({ type: 'error', message: 'Form configuration error. Please contact the site administrator.' })
-      return
-    }
-
     try {
-      // Submit directly to Web3Forms from client-side (avoids Cloudflare challenges)
-      const response = await fetch('https://api.web3forms.com/submit', {
+      // Submit via API route (server-side handles Web3Forms with WEB3FORMS_ACCESS_KEY)
+      const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         body: JSON.stringify({
-          access_key: WEB3FORMS_ACCESS_KEY,
           name: name.trim(),
           email: formEmail.trim(),
           message: message.trim(),
-          subject: 'Portfolio Contact Form Submission',
-          from_name: name.trim(),
         }),
       })
 
