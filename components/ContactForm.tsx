@@ -19,7 +19,7 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
   const [errorMessage, setErrorMessage] = useState('')
   const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
-  const recipientEmail = 'hamzaazhar17@outlook.com'
+  const WEB3FORMS_ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || ''
 
   const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -30,7 +30,7 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
     submitForm()
   }
 
-  const submitForm = () => {
+  const submitForm = async () => {
     setStatus('submitting')
     setErrorMessage('')
     setToast(null)
@@ -54,31 +54,61 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
       return
     }
 
-    // Create email body with form data
-    const emailBodyText = `Name: ${name}\nEmail: ${formEmail}\n\nMessage:\n${message}`
-    const subject = 'Portfolio Contact Form Submission'
-    
-    // Create mailto link with properly encoded parameters
-    const mailtoLink = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBodyText)}`
-    
-    // Open default mail client using a temporary anchor element
-    // This is more reliable than window.location.href
-    const link = document.createElement('a')
-    link.href = mailtoLink
-    link.click()
-    
-    // Immediately update state after triggering mailto
-    setStatus('success')
-    setName('')
-    setFormEmail('')
-    setMessage('')
-    setToast({ type: 'success', message: 'Opening your email client...' })
-    
-    // Auto-dismiss toast and reset status after 3 seconds
-    setTimeout(() => {
-      setToast(null)
-      setStatus('idle')
-    }, 3000)
+    if (!WEB3FORMS_ACCESS_KEY) {
+      setStatus('error')
+      setErrorMessage('Form configuration error. Please contact the site administrator.')
+      setToast({ type: 'error', message: 'Form configuration error. Please contact the site administrator.' })
+      return
+    }
+
+    try {
+      // Submit directly to Web3Forms from client-side (avoids Cloudflare challenges)
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          name: name.trim(),
+          email: formEmail.trim(),
+          message: message.trim(),
+          subject: 'Portfolio Contact Form Submission',
+          from_name: name.trim(),
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setStatus('success')
+        setName('')
+        setFormEmail('')
+        setMessage('')
+        setHoneypot('')
+        setToast({ type: 'success', message: 'Message sent successfully! I\'ll get back to you soon.' })
+        
+        // Auto-dismiss toast and reset status after 5 seconds
+        setTimeout(() => {
+          setToast(null)
+          setStatus('idle')
+        }, 5000)
+      } else {
+        throw new Error(data.message || 'Failed to send message')
+      }
+    } catch (error) {
+      setStatus('error')
+      const errorMsg = error instanceof Error ? error.message : 'Failed to send message. Please try again.'
+      setErrorMessage(errorMsg)
+      setToast({ type: 'error', message: errorMsg })
+      
+      // Auto-dismiss toast after 5 seconds
+      setTimeout(() => {
+        setToast(null)
+        setStatus('idle')
+      }, 5000)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
