@@ -28,6 +28,7 @@ export function Navbar() {
   const isManualNavigationRef = useRef<boolean>(false)
   const isNavigatingRef = useRef<boolean>(false)
   const isOpenRef = useRef(isOpen)
+  const pendingSectionRef = useRef<string | null>(null)
 
   // Keep isOpenRef in sync with state for event handlers
   useEffect(() => {
@@ -87,6 +88,12 @@ export function Navbar() {
   }, [pathname])
 
   useEffect(() => {
+    // Only run scroll-based section detection on home page
+    // On other pages (like /resume), don't interfere with the URL hash
+    if (pathname !== '/') {
+      return
+    }
+
     const sections = navLinks.filter(link => link.href.startsWith('#')).map((link) => link.href.substring(1))
 
     const handleScroll = () => {
@@ -95,7 +102,7 @@ export function Navbar() {
       const scrollPosition = getScrollPosition()
 
       // Skip section detection during manual navigation or when menu is open
-      // Also prevent updating storedScrollYRef when menu is open to avoid capturing the 'fixed' position (0)
+      // Also prevent updating storedScrollYRef when menu is open to avoid capturing the 'fixed' position(0)
       if (isManualNavigationRef.current || isOpenRef.current) {
         return
       }
@@ -133,8 +140,8 @@ export function Navbar() {
             const hasDarkClass = element.classList.contains('bg-bg-dark')
             const computedBg = window.getComputedStyle(element).backgroundColor
             const isDarkBg = computedBg.includes('26, 26, 26') ||
-              computedBg.includes('rgb(26, 26, 26)') ||
-              computedBg.includes('#1a1a1a')
+                    computedBg.includes('rgb(26, 26, 26)') ||
+                    computedBg.includes('#1a1a1a')
             isDark = hasDarkClass || isDarkBg
 
             // Read accent from section
@@ -146,8 +153,20 @@ export function Navbar() {
       }
 
       // If no section found by scroll position, check if we're near the top
+      // BUT: Don't override an existing hash if one is already set (prevents overwriting #value, #work, etc. on page load)
       if (!currentSection && scrollPosition < 100) {
-        currentSection = 'hero'
+        const existingHash = window.location.hash
+        // Only default to 'hero' if there's no hash or the hash is already 'hero'
+        if (!existingHash || existingHash === '#hero') {
+          currentSection = 'hero'
+        } else {
+          // If there's a hash for a different section, respect it and don't override
+          const hashSectionId = existingHash.substring(1)
+          if (navLinks.some(link => link.href === existingHash)) {
+            // Don't set currentSection here - let the fallback logic handle it
+            // This prevents overwriting the hash during initial page load
+          }
+        }
       }
 
       // Update active section and URL hash
@@ -156,8 +175,21 @@ export function Navbar() {
         setIsDarkSection(isDark)
 
         // Update URL hash to match current section
+        // BUT: Don't overwrite if we're at the top and there's already a specific hash set
         const expectedHash = `#${currentSection}`
+        const existingHash = window.location.hash
+        // Only update hash if:
+        // 1. It's different from expected, AND
+        // 2. We're not at the top with a different valid hash (allows page to load and scroll to target)
         if (window.location.hash !== expectedHash) {
+          // If we're near the top and there's a different valid hash, don't override it yet
+          if (scrollPosition < 100 && existingHash && existingHash !== expectedHash) {
+            const hashSectionId = existingHash.substring(1)
+            if (navLinks.some(link => link.href === existingHash)) {
+              // Don't override - let the page scroll to the target section first
+              return
+            }
+          }
           window.history.replaceState(null, '', expectedHash)
         }
       } else if (pathname === '/') {
@@ -187,6 +219,58 @@ export function Navbar() {
     // Clear activeSection when not on home page to prevent dual highlighting
     if (pathname !== '/') {
       setActiveSection('')
+      // Clear any hash on non-home pages (like /resume) to prevent /resume#hero or /resume#value
+      if (window.location.hash) {
+        window.history.replaceState(null, '', pathname)
+      }
+    } else {
+      // Check for pending section or hash in URL
+      const hash = window.location.hash
+      const sectionIdFromHash = hash ? hash.substring(1) : null
+      const targetSection = pendingSectionRef.current || sectionIdFromHash
+      
+      if (targetSection && navLinks.some(link => link.href === `#${targetSection}`)) {
+        const sectionId = targetSection
+        if (pendingSectionRef.current) {
+          pendingSectionRef.current = null
+        }
+        
+        // Wait for DOM to be ready
+        setTimeout(() => {
+          const element = document.getElementById(sectionId)
+          if (element) {
+            setActiveSection(sectionId)
+            
+            // Calculate scroll position
+            const headerHeight = 64
+            let elementTop = 0
+            let currentEl: HTMLElement | null = element
+            while (currentEl) {
+              elementTop += currentEl.offsetTop
+              currentEl = currentEl.offsetParent as HTMLElement | null
+            }
+            
+            const targetScrollPosition = sectionId === 'hero' 
+              ? 0 
+              : Math.max(0, elementTop - headerHeight)
+            
+            // Scroll to target section
+            const html = document.documentElement
+            const originalScrollBehavior = html.style.scrollBehavior
+            html.style.scrollBehavior = 'auto'
+            
+            window.scrollTo({
+              top: targetScrollPosition,
+              behavior: 'auto'
+            })
+            
+            // Re-enable smooth scroll after a brief delay
+            requestAnimationFrame(() => {
+              html.style.scrollBehavior = originalScrollBehavior
+            })
+          }
+        }, 150)
+      }
     }
   }, [pathname])
 
@@ -330,9 +414,8 @@ export function Navbar() {
       // Additional iOS Safari fixes
       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         body.style.height = '100%'
-        body.style.position = 'fixed'
-          // Use type assertion for webkit-specific property
-          ; (body.style as any).webkitOverflowScrolling = 'touch'
+        // Use type assertion for webkit-specific property
+        ;(body.style as any).webkitOverflowScrolling = 'touch'
       }
 
       return () => {
@@ -348,13 +431,13 @@ export function Navbar() {
         // iOS specific cleanup
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
           body.style.height = ''
-            ; (body.style as any).webkitOverflowScrolling = ''
+          ;(body.style as any).webkitOverflowScrolling = ''
         }
 
         // Restore scroll position
         // CRITICAL: Use 'auto' behavior to bypass global CSS scroll-behavior: smooth
         // This prevents an animated jump from Hero when menu closes
-        // Always restore immediately to prevent a frame at scroll 0 (flicker)
+        // Always restore immediately to prevent a frame at scroll 0(flicker)
         // Temporarily disable smooth scroll globally to ensure instant restoration
         const originalScrollBehavior = html.style.scrollBehavior
         html.style.scrollBehavior = 'auto'
@@ -388,7 +471,7 @@ export function Navbar() {
         duration: prefersReducedMotion ? 0.01 : 0.5,
         ease: 'easeOut'
       }
-    },
+    }
   }), [prefersReducedMotion])
 
   // Calculate dynamic background based on scroll progress
@@ -399,10 +482,10 @@ export function Navbar() {
 
     return {
       background: `linear-gradient(
-          180deg,
-          rgba(255, 255, 255, ${bgOpacity}) 0%,
-          rgba(255, 255, 255, ${bgOpacity * 0.95}) 100%
-        )`,
+        180deg,
+        rgba(255, 255, 255, ${bgOpacity}) 0%,
+        rgba(255, 255, 255, ${bgOpacity * 0.95}) 100%
+      )`,
       backdropFilter: `blur(${blurAmount}px)`,
       WebkitBackdropFilter: `blur(${blurAmount}px)`,
     }
@@ -493,7 +576,7 @@ export function Navbar() {
                     sessionStorage.setItem('previousSection', currentHash)
                   }
 
-                  // If we are already on the resume page, prevent default to avoid reload (optional)
+                  // If we are already on the resume page, prevent default to avoid reload(optional)
                   // or allow it to reload. Let's allow standard navigation behavior.
                   // But we must ensure we don't trigger the hash logic below.
                   return
@@ -506,7 +589,13 @@ export function Navbar() {
                   if ('scrollRestoration' in window.history) {
                     window.history.scrollRestoration = 'manual'
                   }
-                  router.push(href)
+                  
+                  const sectionId = link.href.substring(1)
+                  // Store the target section to scroll to after navigation
+                  pendingSectionRef.current = sectionId
+                  
+                  // Navigate to home page with hash - use the full path with hash
+                  router.push(`/${link.href}`)
                 } else if (link.href.startsWith('#')) {
                   // If already on home page, handle smooth scroll
                   e.preventDefault()
@@ -600,197 +689,201 @@ export function Navbar() {
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isOpen && (
-            <>
-              {/* Backdrop overlay - solid dark background */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="fixed z-40 md:hidden"
-                style={{
-                  top: '64px', // Start below the navbar (h-16 = 64px)
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: 'rgba(0, 0, 0, 0.6)',
-                  backdropFilter: 'blur(9px)',
-                  WebkitBackdropFilter: 'blur(9px)'
-                }}
-                onClick={() => setIsOpen(false)}
-              />
+      {/* Mobile Navigation */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop overlay - solid dark background */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed z-40 md:hidden"
+              style={{
+                top: '64px', // Start below the navbar (h-16 = 64px)
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0, 0, 0, 0.6)',
+                backdropFilter: 'blur(9px)',
+                WebkitBackdropFilter: 'blur(9px)'
+              }}
+              onClick={() => setIsOpen(false)}
+            />
 
-              {/* Mobile menu - solid overlay window */}
-              <motion.div
-                id="mobile-menu-overlay"
-                initial={{ scaleY: 0, transformOrigin: 'top' }}
-                animate={{ scaleY: 1 }}
-                exit={{ scaleY: 0 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-                style={{
-                  position: 'fixed',
-                  top: '64px',
-                  left: 0,
-                  right: 0,
-                  height: 'auto',
-                  zIndex: 99999,
-                  backgroundColor: 'var(--bg)',
-                  borderBottom: '1px solid var(--border)',
-                  borderBottomLeftRadius: '16px',
-                  borderBottomRightRadius: '16px',
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-                  opacity: 1,
-                  visibility: 'visible',
-                  display: 'block',
-                  isolation: 'isolate'
-                }}
-                className="md:hidden pb-4"
-              >
-                <div className="flex flex-col gap-1 pt-2">
-                  {navLinks.map((link) => {
-                    const sectionId = link.href.startsWith('#') ? link.href.substring(1) : ''
-                    // Check if it's a hash link and active section matches
-                    const isHashActive = link.href.startsWith('#') && activeSection === sectionId
-                    // Check if it's a route link and pathname matches
-                    const isRouteActive = !link.href.startsWith('#') && pathname === link.href
-                    // Link is active if either condition is true
-                    const isActive = isHashActive || isRouteActive
+            {/* Mobile menu - solid overlay window */}
+            <motion.div
+              key="mobile-menu-overlay"
+              initial={{ scaleY: 0, transformOrigin: 'top' }}
+              animate={{ scaleY: 1 }}
+              exit={{ scaleY: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              style={{
+                position: 'fixed',
+                top: '64px',
+                left: 0,
+                right: 0,
+                height: 'auto',
+                zIndex: 99999,
+                backgroundColor: 'var(--bg)',
+                borderBottom: '1px solid var(--border)',
+                borderBottomLeftRadius: '16px',
+                borderBottomRightRadius: '16px',
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                opacity: 1,
+                visibility: 'visible',
+                display: 'block',
+                isolation: 'isolate'
+              }}
+              className="md:hidden pb-4"
+            >
+              <div className="flex flex-col gap-1 pt-2">
+                {navLinks.map((link) => {
+                  const sectionId = link.href.startsWith('#') ? link.href.substring(1) : ''
+                  // Check if it's a hash link and active section matches
+                  const isHashActive = link.href.startsWith('#') && activeSection === sectionId
+                  // Check if it's a route link and pathname matches
+                  const isRouteActive = !link.href.startsWith('#') && pathname === link.href
+                  // Link is active if either condition is true
+                  const isActive = isHashActive || isRouteActive
 
-                    // If we're not on home page and link is a hash link, prepend '/' to navigate to home first
-                    const href = link.href.startsWith('#') && pathname !== '/'
-                      ? `/${link.href}`
-                      : link.href
+                  // If we're not on home page and link is a hash link, prepend '/' to navigate to home first
+                  const href = link.href.startsWith('#') && pathname !== '/'
+                    ? `/${link.href}`
+                    : link.href
 
-                    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-                      // If navigating to resume page
-                      if (link.href === '/resume') {
-                        // If we are on the home page, store current section
-                        if (pathname === '/') {
-                          const currentHash = window.location.hash || `#${activeSection || 'hero'}`
-                          sessionStorage.setItem('previousSection', currentHash)
-                        }
-
-                        // Close menu
-                        setIsOpen(false)
-
-                        // Allow standard navigation to proceed
-                        return
+                  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                    // If navigating to resume page
+                    if (link.href === '/resume') {
+                      // If we are on the home page, store current section
+                      if (pathname === '/') {
+                        const currentHash = window.location.hash || `#${activeSection || 'hero'}`
+                        sessionStorage.setItem('previousSection', currentHash)
                       }
 
-                      e.preventDefault()
+                      // Close menu
+                      setIsOpen(false)
 
-                      // If navigating from another page to a hash link, ensure proper navigation
-                      if (link.href.startsWith('#') && pathname !== '/') {
-                        // Disable scroll restoration to prevent scroll to top
-                        if ('scrollRestoration' in window.history) {
-                          window.history.scrollRestoration = 'manual'
-                        }
-                        setIsOpen(false)
-                        // Wait for menu to close and body to unlock before navigating
-                        setTimeout(() => {
-                          router.push(href)
-                        }, 100)
-                        return
-                      }
-
-                      // If already on home page, handle smooth scroll
-                      if (link.href.startsWith('#')) {
-                        const sectionId = link.href.substring(1)
-                        const element = document.getElementById(sectionId)
-
-                        if (element) {
-                          // Update active section immediately
-                          setActiveSection(sectionId)
-
-                          // Update active section immediately
-                          setActiveSection(sectionId)
-
-                          // Set flags
-                          isManualNavigationRef.current = true
-                          isNavigatingRef.current = true
-
-                          // Close menu first - this will trigger scroll lock cleanup
-                          // The cleanup will handle restoring to the current position synchronously
-                          setIsOpen(false)
-
-                          // Use a small timeout to ensure the body styles have been cleared
-                          // and the browser has processed the layout change
-                          setTimeout(() => {
-                            // Calculate target position
-                            let targetScrollPosition = 0
-                            if (sectionId === 'hero') {
-                              targetScrollPosition = 0
-                            } else {
-                              const headerHeight = 64
-                              // Use offsetTop calculation which works regardless of viewport position
-                              // This gives us absolute position from document top
-                              let elementTop = 0
-                              let currentEl: HTMLElement | null = element
-                              while (currentEl) {
-                                elementTop += currentEl.offsetTop
-                                currentEl = currentEl.offsetParent as HTMLElement | null
-                              }
-                              targetScrollPosition = Math.max(0, elementTop - headerHeight)
-                            }
-
-                            // Update URL hash without triggering scroll
-                            window.history.pushState(null, '', link.href)
-
-                            // CRITICAL: Handle the scroll sequence manually
-                            const html = document.documentElement
-                            const originalScrollBehavior = html.style.scrollBehavior
-
-                            // The cleanup has already restored us to the current position
-                            // Now we just need to smooth scroll to the target
-
-                            requestAnimationFrame(() => {
-                              html.style.scrollBehavior = 'smooth'
-                              window.scrollTo({
-                                top: targetScrollPosition,
-                                behavior: 'smooth'
-                              })
-
-                              // Cleanup
-                              setTimeout(() => {
-                                html.style.scrollBehavior = originalScrollBehavior
-                                isManualNavigationRef.current = false
-                                isNavigatingRef.current = false
-                              }, 1000)
-                            })
-                          }, 50) // 50ms delay to allow DOM to settle after menu close
-                        }
-                      }
+                      // Allow standard navigation to proceed
+                      return
                     }
 
-                    return (
-                      <a
-                        key={link.href}
-                        href={href}
-                        className={cn(
-                          'px-4 py-3 text-sm font-medium rounded-md transition-colors duration-160 min-h-[44px]',
-                          isActive
-                            ? 'text-accent-yellow bg-accent-yellow/10 font-semibold'
-                            : isDarkSection
-                              ? 'text-text/90 hover:text-accent-yellow hover:bg-surface/50'
-                              : 'text-muted hover:text-accent-yellow hover:bg-surface'
-                        )}
-                        onClick={handleClick}
-                        aria-label={link.label}
-                      >
-                        {link.label}
-                      </a>
-                    )
-                  })}
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </div>
+                    e.preventDefault()
+
+                    // If navigating from another page to a hash link, ensure proper navigation
+                    if (link.href.startsWith('#') && pathname !== '/') {
+                      // Disable scroll restoration to prevent scroll to top
+                      if ('scrollRestoration' in window.history) {
+                        window.history.scrollRestoration = 'manual'
+                      }
+
+                      const sectionId = link.href.substring(1)
+                      // Store the target section to scroll to after navigation
+                      pendingSectionRef.current = sectionId
+                      
+                      setIsOpen(false)
+                      // Wait for menu to close and body to unlock before navigating
+                      setTimeout(() => {
+                        // Navigate to home page with hash - use the full path with hash
+                        router.push(`/${link.href}`)
+                      }, 100)
+                      return
+                    }
+
+                    // If already on home page, handle smooth scroll
+                    if (link.href.startsWith('#')) {
+                      const sectionId = link.href.substring(1)
+                      const element = document.getElementById(sectionId)
+
+                      if (element) {
+                        // Update active section immediately
+                        setActiveSection(sectionId)
+
+                        // Set flags
+                        isManualNavigationRef.current = true
+                        isNavigatingRef.current = true
+
+                        // Close menu first - this will trigger scroll lock cleanup
+                        // The cleanup will handle restoring to the current position synchronously
+                        setIsOpen(false)
+
+                        // Use a small timeout to ensure the body styles have been cleared
+                        // and the browser has processed the layout change
+                        setTimeout(() => {
+                          // Calculate target position
+                          let targetScrollPosition = 0
+                          if (sectionId === 'hero') {
+                            targetScrollPosition = 0
+                          } else {
+                            const headerHeight = 64
+                            // Use offsetTop calculation which works regardless of viewport position
+                            // This gives us absolute position from document top
+                            let elementTop = 0
+                            let currentEl: HTMLElement | null = element
+                            while (currentEl) {
+                              elementTop += currentEl.offsetTop
+                              currentEl = currentEl.offsetParent as HTMLElement | null
+                            }
+
+                            targetScrollPosition = Math.max(0, elementTop - headerHeight)
+                          }
+
+                          // Update URL hash without triggering scroll
+                          window.history.pushState(null, '', link.href)
+
+                          // CRITICAL: Handle the scroll sequence manually
+                          const html = document.documentElement
+                          const originalScrollBehavior = html.style.scrollBehavior
+
+                          // The cleanup has already restored us to the current position
+                          // Now we just need to smooth scroll to the target
+
+                          requestAnimationFrame(() => {
+                            html.style.scrollBehavior = 'smooth'
+                            window.scrollTo({
+                              top: targetScrollPosition,
+                              behavior: 'smooth'
+                            })
+
+                            // Cleanup
+                            setTimeout(() => {
+                              html.style.scrollBehavior = originalScrollBehavior
+                              isManualNavigationRef.current = false
+                              isNavigatingRef.current = false
+                            }, 1000)
+                          })
+                        }, 50) // 50ms delay to allow DOM to settle after menu close
+                      }
+                    }
+                  }
+
+                  return (
+                    <a
+                      key={link.href}
+                      href={href}
+                      className={cn(
+                        'px-4 py-3 text-sm font-medium rounded-md transition-colors duration-160 min-h-[44px]',
+                        isActive
+                          ? 'text-accent-yellow bg-accent-yellow/10 font-semibold'
+                          : isDarkSection
+                            ? 'text-text/90 hover:text-accent-yellow hover:bg-surface/50'
+                            : 'text-muted hover:text-accent-yellow hover:bg-surface'
+                      )}
+                      onClick={handleClick}
+                      aria-label={link.label}
+                    >
+                      {link.label}
+                    </a>
+                  )
+                })}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }

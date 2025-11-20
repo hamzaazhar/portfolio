@@ -97,7 +97,7 @@ export function MetricCard({ value, label, accentColor = 'yellow', delay = 0 }: 
       }}
       className="h-full"
     >
-      <Card accentColor={accentColor} className="text-center relative overflow-hidden group h-full shadow-md hover:shadow-lg transition-shadow duration-300 !p-4 md:!p-5">
+      <Card accentColor={accentColor} className="text-center relative overflow-hidden group h-full shadow-md hover:shadow-lg transition-shadow duration-300 !p-3 sm:!p-4 md:!p-5">
         {/* Subtle glow effect on hover */}
         <div className={`absolute inset-0 ${bgColors[accentColor]} opacity-0 group-hover:opacity-5 blur-2xl transition-opacity duration-500`} />
         

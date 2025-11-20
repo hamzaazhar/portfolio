@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { getProfile } from '@/lib/getProfile'
 import { SkipLink } from '@/components/SkipLink'
 import { ScrollToTop } from '@/components/ScrollToTop'
+import { Navbar } from '@/components/Navbar'
 
 const { profile } = getProfile()
 
@@ -61,6 +62,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} ${manrope.variable} font-sans antialiased`}>
         <SkipLink />
+        <Navbar />
         {children}
         <ScrollToTop />
         <Analytics />

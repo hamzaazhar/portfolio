@@ -30,38 +30,38 @@ export function Footer({ contact }: FooterProps) {
         borderTopWidth: '2px' 
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-2">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-3">
           <div className="text-center md:text-left">
-            <p className="text-xs text-white/70">
+            <p className="text-[10px] sm:text-xs text-white/70">
               © {currentYear} Rana Muhammad Hamza
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
               href={`tel:${contact.phone}`}
-              className="flex items-center gap-1.5 text-xs text-white/70 hover:text-accent-yellow transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/70 hover:text-accent-yellow transition-colors"
               aria-label="Phone"
             >
-              <Phone className="w-3.5 h-3.5" />
+              <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="hidden sm:inline">{contact.phone}</span>
             </a>
             <a
               href={`mailto:${contact.email}`}
-              className="flex items-center gap-1.5 text-xs text-white/70 hover:text-accent-yellow transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/70 hover:text-accent-yellow transition-colors"
               aria-label="Email"
             >
-              <Mail className="w-3.5 h-3.5" />
+              <Mail className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="hidden sm:inline">{contact.email}</span>
             </a>
             <a
               href={contact.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-xs text-white/70 hover:text-accent-yellow transition-colors"
+              className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-xs text-white/70 hover:text-accent-yellow transition-colors"
               aria-label="LinkedIn"
             >
-              <Linkedin className="w-3.5 h-3.5" />
+              <Linkedin className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               <span className="hidden sm:inline">LinkedIn</span>
             </a>
           </div>

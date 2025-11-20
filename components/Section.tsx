@@ -106,7 +106,7 @@ export function Section({
     const staggerDelay = prefersReducedMotion ? 0 : (isIOS ? 0.01 : 0.02)
 
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" data-reveal={hasAnimated}>
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8" data-reveal={hasAnimated}>
         {eyebrow && (
           <motion.p
             initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12 }}
@@ -116,7 +116,7 @@ export function Section({
               ease: revealEase as [number, number, number, number]
             }}
             className={cn(
-              'text-sm font-medium uppercase tracking-wider mb-4',
+              'text-xs sm:text-sm font-medium uppercase tracking-wider mb-3 sm:mb-4',
               variant === 'dark' ? 'text-white/70' : 'text-muted'
             )}
           >

@@ -86,14 +86,16 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
         }}
       />
 
-      <div className="relative z-10 text-center space-y-5 md:space-y-6 max-w-7xl mx-auto px-2 sm:px-4 lg:px-6 pt-32 md:pt-40 pb-8 md:pb-12">
+      <div className="relative z-10 text-center space-y-4 sm:space-y-5 md:space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32 md:pt-40 pb-6 sm:pb-8 md:pb-12">
         {/* H1 Headline - Word by word stagger animation */}
         <motion.h1
-          className="font-heading font-bold text-text"
+          className="font-heading font-bold text-text px-2"
           style={{ 
-            fontSize: 'clamp(44px, 5vw, 72px)',
-            lineHeight: 1.08,
-            letterSpacing: '-0.01em'
+            fontSize: 'clamp(32px, 4.5vw, 72px)',
+            lineHeight: 1.1,
+            letterSpacing: '-0.01em',
+            wordBreak: 'break-word',
+            hyphens: 'auto'
           }}
           initial="hidden"
           animate="visible"
@@ -119,7 +121,7 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
                   }
                 }
               }}
-              className="inline-block mr-2 sm:mr-4"
+              className="inline-block mr-1.5 sm:mr-2 md:mr-3"
             >
               {word}
             </motion.span>
@@ -135,11 +137,12 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
             delay: subheadDelay,
             ease: isIOS ? [0.25, 0.46, 0.45, 0.94] : [0.2, 0.7, 0.2, 1]
           }}
-          className="text-xl md:text-2xl lg:text-3xl font-medium text-text leading-relaxed mx-auto"
+          className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-text leading-relaxed mx-auto px-2"
           style={{ 
-            fontSize: 'clamp(18px, 1.8vw, 28px)', 
+            fontSize: 'clamp(16px, 1.8vw, 28px)', 
             lineHeight: 1.6,
-            maxWidth: '68ch'
+            maxWidth: '68ch',
+            wordBreak: 'break-word'
           }}
         >
           {subhead.startsWith('I ') ? (
@@ -287,10 +290,11 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
               }
             }}
             className={cn(
-              'inline-flex items-center justify-center px-10 py-4 rounded-xl',
-              'bg-accent text-text font-bold text-lg',
+              'inline-flex items-center justify-center rounded-xl',
+              'bg-accent text-text font-bold',
               'hover:bg-accent/90 transition-colors shadow-md hover:shadow-lg',
-              'min-h-[52px] min-w-[220px]',
+              'px-6 py-3 text-base sm:px-8 sm:py-3.5 sm:text-lg md:px-10 md:py-4',
+              'min-h-[44px] w-full sm:w-auto sm:min-w-[200px] md:min-w-[220px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
             )}
             aria-label={ctas.primary.text}
@@ -327,10 +331,11 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
               }
             }}
             className={cn(
-              'inline-flex items-center justify-center px-10 py-4 rounded-xl',
-              'border border-text/80 text-text font-bold text-lg',
+              'inline-flex items-center justify-center rounded-xl',
+              'border border-text/80 text-text font-bold',
               'hover:border-accent hover:text-accent transition-colors',
-              'min-h-[52px] min-w-[220px]',
+              'px-6 py-3 text-base sm:px-8 sm:py-3.5 sm:text-lg md:px-10 md:py-4',
+              'min-h-[44px] w-full sm:w-auto sm:min-w-[200px] md:min-w-[220px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
             )}
             aria-label={ctas.secondary.text}
