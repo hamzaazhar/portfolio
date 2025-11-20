@@ -1,0 +1,357 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - alert [ref=e3]
+  - navigation "Main Navigation" [ref=e4]:
+    - generic [ref=e6]:
+      - link "Home" [ref=e7] [cursor=pointer]:
+        - /url: /#hero
+        - text: RMH
+      - generic [ref=e8]:
+        - link "Home" [ref=e9] [cursor=pointer]:
+          - /url: "#hero"
+          - text: Home
+        - link "Value" [ref=e11] [cursor=pointer]:
+          - /url: "#value"
+        - link "Work" [ref=e12] [cursor=pointer]:
+          - /url: "#work"
+        - link "Resume" [ref=e13] [cursor=pointer]:
+          - /url: /resume
+        - link "Contact" [ref=e14] [cursor=pointer]:
+          - /url: "#contact"
+  - main [ref=e15]:
+    - generic [ref=e21]:
+      - heading "Digital Transformation & Decision Intelligence Lead" [level=1] [ref=e22]:
+        - generic [ref=e23]: Digital
+        - generic [ref=e24]: Transformation
+        - generic [ref=e25]: "&"
+        - generic [ref=e26]: Decision
+        - generic [ref=e27]: Intelligence
+        - generic [ref=e28]: Lead
+      - paragraph [ref=e29]:
+        - text: I
+        - generic [ref=e30]:
+          - generic [ref=e31]: R
+          - generic [ref=e32]: a
+          - generic [ref=e33]: "n"
+          - generic [ref=e34]: a
+          - generic [ref=e35]: M
+          - generic [ref=e36]: u
+          - generic [ref=e37]: h
+          - generic [ref=e38]: a
+          - generic [ref=e39]: m
+          - generic [ref=e40]: m
+          - generic [ref=e41]: a
+          - generic [ref=e42]: d
+          - generic [ref=e43]: H
+          - generic [ref=e44]: a
+          - generic [ref=e45]: m
+          - generic [ref=e46]: z
+          - generic [ref=e47]: a
+        - text: design AI-driven systems that remove operational friction and enable real-time execution across business teams.
+      - paragraph [ref=e48]: Predictive intelligence, workflow automation, and decision systems that make operations measurable and manageable.
+      - generic [ref=e49]:
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: "70"
+            - generic [ref=e56]: "%"
+          - generic [ref=e57]: 70% reduction in HR workload
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]: "15"
+            - generic [ref=e64]: "%"
+          - generic [ref=e65]: 15% reduction in machine downtime
+        - generic [ref=e69]:
+          - generic [ref=e70]:
+            - generic [ref=e71]: "3"
+            - generic [ref=e72]: days
+          - generic [ref=e73]: 3–4 days faster sampling
+      - generic [ref=e74]:
+        - link "See Case Studies" [ref=e75] [cursor=pointer]:
+          - /url: "#work"
+        - link "Discuss Your Environment" [ref=e76] [cursor=pointer]:
+          - /url: "#contact"
+    - img [ref=e78]
+    - generic [ref=e81]:
+      - paragraph [ref=e82]: How I Create Impact
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - heading "How I Create Organizational Impact" [level=2] [ref=e86]
+          - paragraph [ref=e87]: Three core approaches that drive measurable results across manufacturing operations.
+        - generic [ref=e88]:
+          - generic [ref=e90]:
+            - img [ref=e92]
+            - generic [ref=e94]:
+              - heading "Operational Flow Design" [level=3] [ref=e95]
+              - paragraph [ref=e96]: I redesign end-to-end workflows to eliminate bottlenecks and manual dependencies.
+          - generic [ref=e99]:
+            - img [ref=e101]
+            - generic [ref=e105]:
+              - heading "Predictive Decision Systems" [level=3] [ref=e106]
+              - paragraph [ref=e107]: I convert real-time signals into forward-biased decisions using ML and analytical systems.
+          - generic [ref=e110]:
+            - img [ref=e112]
+            - generic [ref=e117]:
+              - heading "Cross-Functional Execution" [level=3] [ref=e118]
+              - paragraph [ref=e119]: I work across Sales, HR, Production, IT, and Leadership to land change that sticks.
+    - generic [ref=e122]:
+      - paragraph [ref=e123]: Technical Expertise
+      - generic [ref=e125]:
+        - generic [ref=e126]:
+          - heading "Technical Capabilities" [level=2] [ref=e127]
+          - paragraph [ref=e128]: A comprehensive toolkit spanning data systems, analytics, and operational intelligence.
+        - generic [ref=e129]:
+          - generic [ref=e131]:
+            - generic [ref=e132]:
+              - img [ref=e134]
+              - heading "Decision Systems" [level=3] [ref=e136]
+            - list [ref=e137]:
+              - listitem [ref=e138]:
+                - img [ref=e139]
+                - generic [ref=e142]: ML Modeling
+              - listitem [ref=e143]:
+                - img [ref=e144]
+                - generic [ref=e147]: Time-Series Forecasting
+              - listitem [ref=e148]:
+                - img [ref=e149]
+                - generic [ref=e152]: Similarity Models
+              - listitem [ref=e153]:
+                - img [ref=e154]
+                - generic [ref=e157]: Generative AI
+          - generic [ref=e160]:
+            - generic [ref=e161]:
+              - img [ref=e163]
+              - heading "Data Fabric & Integration" [level=3] [ref=e167]
+            - list [ref=e168]:
+              - listitem [ref=e169]:
+                - img [ref=e170]
+                - generic [ref=e173]: PostgreSQL
+              - listitem [ref=e174]:
+                - img [ref=e175]
+                - generic [ref=e178]: MSSQL
+              - listitem [ref=e179]:
+                - img [ref=e180]
+                - generic [ref=e183]: Oracle DB2
+              - listitem [ref=e184]:
+                - img [ref=e185]
+                - generic [ref=e188]: Kafka
+              - listitem [ref=e189]:
+                - img [ref=e190]
+                - generic [ref=e193]: MongoDB
+          - generic [ref=e196]:
+            - generic [ref=e197]:
+              - img [ref=e199]
+              - heading "Operational Intelligence & Dashboards" [level=3] [ref=e203]
+            - list [ref=e204]:
+              - listitem [ref=e205]:
+                - img [ref=e206]
+                - generic [ref=e209]: Tableau
+              - listitem [ref=e210]:
+                - img [ref=e211]
+                - generic [ref=e214]: Power BI
+              - listitem [ref=e215]:
+                - img [ref=e216]
+                - generic [ref=e219]: KPI System Design
+              - listitem [ref=e220]:
+                - img [ref=e221]
+                - generic [ref=e224]: Operational Dashboards
+    - generic [ref=e227]:
+      - paragraph [ref=e228]: Selected Projects
+      - generic [ref=e230]:
+        - generic [ref=e231]:
+          - heading "Impact Case Studies" [level=2] [ref=e232]
+          - paragraph [ref=e233]: Real projects delivering measurable outcomes across manufacturing operations, from predictive analytics to workflow automation.
+        - generic [ref=e234]:
+          - generic [ref=e239]:
+            - generic [ref=e240]:
+              - generic [ref=e241]:
+                - generic [ref=e242]:
+                  - img [ref=e243]
+                  - generic [ref=e245]: Impact
+                - heading "Machine Health + RCA Decision Engine" [level=3] [ref=e246]
+              - generic:
+                - img
+            - generic [ref=e247]:
+              - generic [ref=e248]:
+                - heading "Challenge" [level=4] [ref=e251]
+                - paragraph [ref=e252]: Unplanned stoppages lacked diagnosis clarity.
+              - generic [ref=e253]:
+                - heading "Solution" [level=4] [ref=e256]
+                - paragraph [ref=e257]: Combined stop-logs, locator history, and time-series signals into a generative RCA + machine health scoring engine.
+            - generic [ref=e259]:
+              - img [ref=e261]
+              - paragraph [ref=e265]: Reduced unplanned downtime by ~15%.
+              - img [ref=e266]
+            - generic [ref=e271]:
+              - generic [ref=e272]: Python
+              - generic [ref=e273]: SQL Server
+              - generic [ref=e274]: MongoDB
+              - generic [ref=e275]: Tableau
+          - generic [ref=e280]:
+            - generic [ref=e281]:
+              - generic [ref=e282]:
+                - generic [ref=e283]:
+                  - img [ref=e284]
+                  - generic [ref=e286]: Impact
+                - heading "Sampling Recommendation System" [level=3] [ref=e287]
+              - generic:
+                - img
+            - generic [ref=e288]:
+              - generic [ref=e289]:
+                - heading "Challenge" [level=4] [ref=e292]
+                - paragraph [ref=e293]: Sampling decisions were manual and delayed.
+              - generic [ref=e294]:
+                - heading "Solution" [level=4] [ref=e297]
+                - paragraph [ref=e298]: ML similarity model to recommend optimal product configurations.
+            - generic [ref=e300]:
+              - img [ref=e302]
+              - paragraph [ref=e306]: Reduced sampling cycle by 3–4 days.
+              - img [ref=e307]
+            - generic [ref=e312]:
+              - generic [ref=e313]: Python
+              - generic [ref=e314]: Scikit-learn
+              - generic [ref=e315]: PostgreSQL
+          - generic [ref=e320]:
+            - generic [ref=e321]:
+              - generic [ref=e322]:
+                - generic [ref=e323]:
+                  - img [ref=e324]
+                  - generic [ref=e326]: Impact
+                - heading "HR Workflow Automation + Reporting Layer" [level=3] [ref=e327]
+              - generic:
+                - img
+            - generic [ref=e328]:
+              - generic [ref=e329]:
+                - heading "Challenge" [level=4] [ref=e332]
+                - paragraph [ref=e333]: Weekly/Monthly HR reporting required manual consolidation.
+              - generic [ref=e334]:
+                - heading "Solution" [level=4] [ref=e337]
+                - paragraph [ref=e338]: Automated approval & reporting pipelines integrated with Power BI dashboards.
+            - generic [ref=e340]:
+              - img [ref=e342]
+              - paragraph [ref=e346]: ~70% reduction in HR workload.
+              - img [ref=e347]
+            - generic [ref=e352]:
+              - generic [ref=e353]: Python
+              - generic [ref=e354]: Power BI
+              - generic [ref=e355]: SQL
+    - generic [ref=e357]:
+      - paragraph [ref=e358]: Career Journey
+      - generic [ref=e360]:
+        - generic [ref=e361]:
+          - heading "Growth Timeline" [level=2] [ref=e362]
+          - paragraph [ref=e363]: A progression from foundational analytics to end-to-end digital transformation leadership.
+        - generic [ref=e367]:
+          - generic [ref=e370]:
+            - generic [ref=e371]: "2020"
+            - paragraph [ref=e374]: Built dashboards & ML models
+          - generic [ref=e377]:
+            - generic [ref=e378]: "2021"
+            - paragraph [ref=e381]: Designed automation pipelines across Sales, HR, Production
+          - generic [ref=e384]:
+            - generic [ref=e385]: "2022"
+            - paragraph [ref=e388]: Centralized distributed databases into a unified warehouse
+          - generic [ref=e391]:
+            - generic [ref=e392]: "2023"
+            - paragraph [ref=e395]: Delivered machine health + RCA generative AI engine
+          - generic [ref=e398]:
+            - generic [ref=e399]: "2024"
+            - paragraph [ref=e402]: Leading decision intelligence and transformation initiatives end-to-end
+    - generic [ref=e404]:
+      - paragraph [ref=e405]: Education
+      - generic [ref=e407]:
+        - generic [ref=e408]:
+          - heading "Education" [level=2] [ref=e411]
+          - paragraph [ref=e412]: Academic foundation in Computer Science and Data Science
+        - generic [ref=e413]:
+          - generic [ref=e415]:
+            - heading "Masters in Computer Science" [level=3] [ref=e416]
+            - generic [ref=e417]:
+              - paragraph [ref=e418]: Queen Mary University of London
+              - paragraph [ref=e419]: Jan 2017 - Dec 2018 • United Kingdom
+          - generic [ref=e421]:
+            - heading "Bachelors in Computer Science" [level=3] [ref=e422]
+            - generic [ref=e423]:
+              - paragraph [ref=e424]: National University of Computer and Emerging Sciences
+              - paragraph [ref=e425]: Jan 2012 - Dec 2016 • Pakistan
+    - generic [ref=e427]:
+      - paragraph [ref=e428]: Certifications
+      - generic [ref=e430]:
+        - generic [ref=e431]:
+          - heading "Professional Certifications" [level=2] [ref=e432]
+          - paragraph [ref=e433]: Industry-recognized credentials demonstrating expertise across platforms and technologies
+        - generic [ref=e434]:
+          - generic [ref=e437]:
+            - heading "Sales Negotiation" [level=3] [ref=e438]
+            - generic [ref=e439]:
+              - paragraph [ref=e440]: LinkedIn
+              - paragraph [ref=e441]: May 2025
+          - generic [ref=e444]:
+            - heading "Develop Your Customer Service Skills" [level=3] [ref=e445]
+            - generic [ref=e446]:
+              - paragraph [ref=e447]: LinkedIn
+              - paragraph [ref=e448]: May 2025
+          - generic [ref=e451]:
+            - heading "Mastering Productivity with AI & Digital Excellence" [level=3] [ref=e452]
+            - generic [ref=e453]:
+              - paragraph [ref=e454]: Institute of Strategic Intelligence
+              - paragraph [ref=e455]: Feb 2025
+          - generic [ref=e458]:
+            - heading "McKinsey Forward Program" [level=3] [ref=e459]
+            - generic [ref=e460]:
+              - paragraph [ref=e461]: McKinsey & Company
+              - paragraph [ref=e462]: Apr 2024
+          - generic [ref=e465]:
+            - heading "Fundamentals of Data Analytics" [level=3] [ref=e466]
+            - generic [ref=e467]:
+              - paragraph [ref=e468]: Lahore University of Management Sciences
+              - paragraph [ref=e469]: Jun 2021
+          - generic [ref=e472]:
+            - heading "Data Science & Machine Learning Using Python" [level=3] [ref=e473]
+            - generic [ref=e474]:
+              - paragraph [ref=e475]: Lahore University of Management Sciences
+              - paragraph [ref=e476]: Mar 2021
+    - img [ref=e478]
+    - generic [ref=e481]:
+      - paragraph [ref=e482]: Contact
+      - generic [ref=e484]:
+        - generic [ref=e485]:
+          - heading "Discuss Operational Friction and System Design" [level=2] [ref=e488]
+          - paragraph [ref=e489]: If your organization needs clearer visibility, automated workflows, or predictive intelligence systems, let's talk.
+        - generic [ref=e493]:
+          - textbox [ref=e494]
+          - generic [ref=e495]:
+            - generic [ref=e496]: Name *
+            - textbox "Name *" [ref=e497]:
+              - /placeholder: Your name
+          - generic [ref=e498]:
+            - generic [ref=e499]: Email *
+            - textbox "Email *" [ref=e500]:
+              - /placeholder: your.email@example.com
+          - generic [ref=e501]:
+            - generic [ref=e502]: Message *
+            - textbox "Message *" [ref=e503]:
+              - /placeholder: Your message... (Press Enter to send, Shift+Enter for new line)
+          - button "Send message" [ref=e504] [cursor=pointer]:
+            - img [ref=e505]
+            - text: Send Message
+  - contentinfo [ref=e508]:
+    - generic [ref=e510]:
+      - paragraph [ref=e512]: © 2025 Rana Muhammad Hamza
+      - generic [ref=e513]:
+        - link "Phone" [ref=e514] [cursor=pointer]:
+          - /url: tel:+923147214134
+          - img [ref=e515]
+          - generic [ref=e517]: "+923147214134"
+        - link "Email" [ref=e518] [cursor=pointer]:
+          - /url: mailto:hamzaazhar17@outlook.com
+          - img [ref=e519]
+          - generic [ref=e522]: hamzaazhar17@outlook.com
+        - link "LinkedIn" [ref=e523] [cursor=pointer]:
+          - /url: https://www.linkedin.com/in/rana-muhammad-hamza/
+          - img [ref=e524]
+          - generic [ref=e528]: LinkedIn
+```

@@ -131,18 +131,18 @@ export function CaseCardRevamped({
                 {title}
               </h3>
             </div>
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 45 }}
-              transition={{ duration: 0.2 }}
+            <div
               className={cn(
                 'w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center flex-shrink-0',
                 'border-2',
                 config.border,
-                config.bg
+                config.bg,
+                'pointer-events-none'
               )}
+              aria-hidden="true"
             >
               <ArrowUpRight className={cn('w-3.5 h-3.5 md:w-4 md:h-4', config.text)} strokeWidth={2.5} />
-            </motion.div>
+            </div>
           </div>
 
           {/* Compact Content - Vertical Stack for 3-column layout */}

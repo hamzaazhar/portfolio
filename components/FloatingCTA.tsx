@@ -37,6 +37,7 @@ export function FloatingCTA({
       top: 0,
       behavior: 'smooth'
     })
+    window.history.pushState(null, '', '#hero')
   }
 
   return (

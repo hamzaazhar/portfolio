@@ -67,7 +67,7 @@ export default function Home() {
           const sectionId = hash.substring(1) // Remove the #
           const element = document.getElementById(sectionId)
           if (element) {
-            // Calculate position with header offset
+            // Calculate position with header offset using getBoundingClientRect for accuracy
             const headerHeight = 64
             const rect = element.getBoundingClientRect()
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop

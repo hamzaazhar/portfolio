@@ -32,6 +32,7 @@ export function ScrollToTop() {
       top: 0,
       behavior: 'smooth',
     })
+    window.history.pushState(null, '', '#hero')
   }
 
   return (

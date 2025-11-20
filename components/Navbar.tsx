@@ -26,15 +26,22 @@ export function Navbar() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const storedScrollYRef = useRef<number>(0)
   const isManualNavigationRef = useRef<boolean>(false)
+  const isNavigatingRef = useRef<boolean>(false)
+  const isOpenRef = useRef(isOpen)
+
+  // Keep isOpenRef in sync with state for event handlers
+  useEffect(() => {
+    isOpenRef.current = isOpen
+  }, [isOpen])
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     setPrefersReducedMotion(mediaQuery.matches)
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches)
     }
-    
+
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [])
@@ -81,19 +88,21 @@ export function Navbar() {
 
   useEffect(() => {
     const sections = navLinks.filter(link => link.href.startsWith('#')).map((link) => link.href.substring(1))
-    
+
     const handleScroll = () => {
       handleScrollProgress()
-      
+
       const scrollPosition = getScrollPosition()
-      // Update stored scroll position
-      storedScrollYRef.current = scrollPosition
-      
-      // Skip section detection during manual navigation
-      if (isManualNavigationRef.current) {
+
+      // Skip section detection during manual navigation or when menu is open
+      // Also prevent updating storedScrollYRef when menu is open to avoid capturing the 'fixed' position (0)
+      if (isManualNavigationRef.current || isOpenRef.current) {
         return
       }
-      
+
+      // Update stored scroll position
+      storedScrollYRef.current = scrollPosition
+
       // Use viewport center for better section detection on mobile
       const viewportHeight = window.innerHeight
       const detectionPoint = scrollPosition + (viewportHeight / 3)
@@ -115,19 +124,19 @@ export function Navbar() {
           const rect = element.getBoundingClientRect()
           const elementTop = rect.top + scrollPosition
           const elementBottom = elementTop + rect.height
-          
+
           // Check if detection point is within this section
           if (detectionPoint >= elementTop && detectionPoint < elementBottom) {
             currentSection = section
-            
+
             // Check if section has dark variant
             const hasDarkClass = element.classList.contains('bg-bg-dark')
             const computedBg = window.getComputedStyle(element).backgroundColor
-            const isDarkBg = computedBg.includes('26, 26, 26') || 
-                            computedBg.includes('rgb(26, 26, 26)') ||
-                            computedBg.includes('#1a1a1a')
+            const isDarkBg = computedBg.includes('26, 26, 26') ||
+              computedBg.includes('rgb(26, 26, 26)') ||
+              computedBg.includes('#1a1a1a')
             isDark = hasDarkClass || isDarkBg
-            
+
             // Read accent from section
             const accentKey = (element.dataset.accent as keyof typeof colorMap) || 'yellow'
             setNavAccent(colorMap[accentKey])
@@ -145,7 +154,7 @@ export function Navbar() {
       if (currentSection) {
         setActiveSection(currentSection)
         setIsDarkSection(isDark)
-        
+
         // Update URL hash to match current section
         const expectedHash = `#${currentSection}`
         if (window.location.hash !== expectedHash) {
@@ -165,7 +174,7 @@ export function Navbar() {
 
     const throttledHandler = throttleScroll(handleScroll)
     const eventOptions = supportsPassiveListeners() ? { passive: true } : false
-    
+
     window.addEventListener('scroll', throttledHandler, eventOptions as any)
     handleScroll()
     return () => window.removeEventListener('scroll', throttledHandler)
@@ -198,7 +207,7 @@ export function Navbar() {
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown)
       window.addEventListener('resize', handleResize)
-      
+
       return () => {
         document.removeEventListener('keydown', handleKeyDown)
         window.removeEventListener('resize', handleResize)
@@ -219,16 +228,16 @@ export function Navbar() {
             return
           }
         }
-        
+
         // Get current scroll position
         const scrollY = getScrollPosition()
         storedScrollYRef.current = scrollY
-        
+
         // Detect section using absolute document positions
         const sections = navLinks.filter(link => link.href.startsWith('#')).map((link) => link.href.substring(1))
         const viewportHeight = window.innerHeight
         const detectionPoint = scrollY + (viewportHeight / 3)
-        
+
         let detectedSection = ''
         for (const section of sections) {
           const element = document.getElementById(section)
@@ -240,26 +249,26 @@ export function Navbar() {
               elementTop += currentEl.offsetTop
               currentEl = currentEl.offsetParent as HTMLElement | null
             }
-            
+
             const elementBottom = elementTop + element.offsetHeight
-            
+
             if (detectionPoint >= elementTop && detectionPoint < elementBottom) {
               detectedSection = section
               break
             }
           }
         }
-        
+
         // Fallback to hero if near top
         if (!detectedSection && scrollY < 100) {
           detectedSection = 'hero'
         }
-        
+
         if (detectedSection) {
           setActiveSection(detectedSection)
         }
       }
-      
+
       // Run immediately
       syncActiveSection()
     }
@@ -270,12 +279,12 @@ export function Navbar() {
     const body = document.body
     const html = document.documentElement
     let scrollY = 0
-    
+
     if (isOpen) {
       // Store current scroll position BEFORE fixing body
       scrollY = getScrollPosition()
       storedScrollYRef.current = scrollY
-      
+
       // Store original styles to restore later
       const originalBodyStyle = {
         position: body.style.position,
@@ -287,15 +296,15 @@ export function Navbar() {
         touchAction: body.style.touchAction,
         paddingRight: body.style.paddingRight,
       }
-      
+
       const originalHtmlStyle = {
         overflow: html.style.overflow,
         overscrollBehavior: html.style.overscrollBehavior,
       }
-      
+
       // Calculate scrollbar width to prevent layout shift
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-      
+
       // Apply comprehensive scroll lock
       body.style.position = 'fixed'
       body.style.top = `-${scrollY}px`
@@ -303,54 +312,68 @@ export function Navbar() {
       body.style.right = '0'
       body.style.width = '100%'
       body.style.overflow = 'hidden'
-      
+
       // Prevent scrollbar layout shift
       if (scrollbarWidth > 0) {
         body.style.paddingRight = `${scrollbarWidth}px`
       }
-      
+
       // Prevent iOS bounce scrolling and Android overscroll
       body.style.touchAction = 'none'
       html.style.overflow = 'hidden'
-      
+
       // Modern browsers overscroll behavior
       if ('overscrollBehavior' in html.style) {
         html.style.overscrollBehavior = 'contain'
       }
-      
+
       // Additional iOS Safari fixes
       if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         body.style.height = '100%'
         body.style.position = 'fixed'
-        // Use type assertion for webkit-specific property
-        ;(body.style as any).webkitOverflowScrolling = 'touch'
+          // Use type assertion for webkit-specific property
+          ; (body.style as any).webkitOverflowScrolling = 'touch'
       }
-      
+
       return () => {
         // Restore all original styles
         Object.keys(originalBodyStyle).forEach(key => {
           body.style[key as keyof typeof originalBodyStyle] = originalBodyStyle[key as keyof typeof originalBodyStyle]
         })
-        
+
         Object.keys(originalHtmlStyle).forEach(key => {
           html.style[key as keyof typeof originalHtmlStyle] = originalHtmlStyle[key as keyof typeof originalHtmlStyle]
         })
-        
+
         // iOS specific cleanup
         if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
           body.style.height = ''
-          ;(body.style as any).webkitOverflowScrolling = ''
+            ; (body.style as any).webkitOverflowScrolling = ''
         }
-        
+
         // Restore scroll position
+        // CRITICAL: Use 'auto' behavior to bypass global CSS scroll-behavior: smooth
+        // This prevents an animated jump from Hero when menu closes
+        // Always restore immediately to prevent a frame at scroll 0 (flicker)
+        // Temporarily disable smooth scroll globally to ensure instant restoration
+        const originalScrollBehavior = html.style.scrollBehavior
+        html.style.scrollBehavior = 'auto'
+
+        // Restore immediately without requestAnimationFrame to prevent a frame at scroll 0
+        window.scrollTo({ top: scrollY, behavior: 'auto' })
+
+        // Re-enable smooth scroll after a small delay
+        // We use a double RAF to ensure the 'auto' scroll has been processed
         if (typeof requestAnimationFrame !== 'undefined') {
           requestAnimationFrame(() => {
-            window.scrollTo(0, scrollY)
+            requestAnimationFrame(() => {
+              html.style.scrollBehavior = originalScrollBehavior
+            })
           })
         } else {
           setTimeout(() => {
-            window.scrollTo(0, scrollY)
-          }, 0)
+            html.style.scrollBehavior = originalScrollBehavior
+          }, 50)
         }
       }
     }
@@ -359,12 +382,12 @@ export function Navbar() {
   // Memoize animation variants for better performance
   const navVariants = useMemo(() => ({
     hidden: { opacity: 0 },
-    visible: { 
-      opacity: 1, 
-      transition: { 
-        duration: prefersReducedMotion ? 0.01 : 0.5, 
-        ease: 'easeOut' 
-      } 
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: prefersReducedMotion ? 0.01 : 0.5,
+        ease: 'easeOut'
+      }
     },
   }), [prefersReducedMotion])
 
@@ -373,13 +396,13 @@ export function Navbar() {
     const baseOpacity = isDarkSection ? 0.98 : 0.9
     const blurAmount = 2 + scrollProgress * 10
     const bgOpacity = baseOpacity + scrollProgress * 0.05
-    
+
     return {
       background: `linear-gradient(
-        180deg,
-        rgba(255, 255, 255, ${bgOpacity}) 0%,
-        rgba(255, 255, 255, ${bgOpacity * 0.95}) 100%
-      )`,
+          180deg,
+          rgba(255, 255, 255, ${bgOpacity}) 0%,
+          rgba(255, 255, 255, ${bgOpacity * 0.95}) 100%
+        )`,
       backdropFilter: `blur(${blurAmount}px)`,
       WebkitBackdropFilter: `blur(${blurAmount}px)`,
     }
@@ -394,8 +417,8 @@ export function Navbar() {
       className={cn(
         'fixed top-0 left-0 right-0 z-header border-b-2 transition-all duration-300',
         'transform-none opacity-100 visible',
-        isDarkSection 
-          ? 'border-border shadow-2xl' 
+        isDarkSection
+          ? 'border-border shadow-2xl'
           : 'border-border shadow-lg'
       )}
       style={{
@@ -422,14 +445,14 @@ export function Navbar() {
         {!prefersReducedMotion && (
           <motion.div
             className="absolute top-1/2 -translate-y-1/2 h-32 w-64 rounded-full blur-3xl opacity-60"
-            style={{ 
+            style={{
               background: `radial-gradient(circle, var(--nav-accent) 0%, transparent 60%)`
             }}
             animate={{ x: ['-20%', '120%'] }}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity, 
-              ease: 'easeInOut' 
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: 'easeInOut'
             }}
           />
         )}
@@ -455,28 +478,27 @@ export function Navbar() {
               const isRouteActive = !link.href.startsWith('#') && pathname === link.href
               // Link is active if either condition is true
               const isActive = isHashActive || isRouteActive
-              
+
               // If we're not on home page and link is a hash link, prepend '/' to navigate to home first
-              const href = link.href.startsWith('#') && pathname !== '/' 
-                ? `/${link.href}` 
+              const href = link.href.startsWith('#') && pathname !== '/'
+                ? `/${link.href}`
                 : link.href
-              
+
               const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-                // If navigating to resume page, store current section for back navigation
-                if (link.href === '/resume' && pathname === '/') {
-                  // Store current active section or hash
-                  const currentHash = window.location.hash || `#${activeSection || 'hero'}`
-                  sessionStorage.setItem('previousSection', currentHash)
-                  // Clear any hash from URL before navigating to prevent redirect issues
-                  if (window.location.hash) {
-                    window.history.replaceState(null, '', window.location.pathname)
+                // If navigating to resume page
+                if (link.href === '/resume') {
+                  // If we are on the home page, store current section
+                  if (pathname === '/') {
+                    const currentHash = window.location.hash || `#${activeSection || 'hero'}`
+                    sessionStorage.setItem('previousSection', currentHash)
                   }
-                  // Navigate directly to resume page
-                  e.preventDefault()
-                  router.push('/resume')
+
+                  // If we are already on the resume page, prevent default to avoid reload (optional)
+                  // or allow it to reload. Let's allow standard navigation behavior.
+                  // But we must ensure we don't trigger the hash logic below.
                   return
                 }
-                
+
                 // If navigating from another page to a hash link, ensure proper navigation
                 if (link.href.startsWith('#') && pathname !== '/') {
                   e.preventDefault()
@@ -493,21 +515,33 @@ export function Navbar() {
                   if (element) {
                     // Update active section immediately
                     setActiveSection(sectionId)
-                    
+
                     // Set manual navigation flag
                     isManualNavigationRef.current = true
-                    
+
                     // Update URL hash without triggering scroll
                     window.history.pushState(null, '', link.href)
-                    
-                    const headerHeight = 64
-                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-                    const offsetPosition = elementPosition - headerHeight
-                    window.scrollTo({
-                      top: offsetPosition,
-                      behavior: 'smooth'
-                    })
-                    
+
+                    // Special handling for hero section - scroll to top
+                    if (sectionId === 'hero') {
+                      window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                      })
+                    } else {
+                      // Calculate scroll position with proper offset for other sections
+                      const headerHeight = 64
+                      const rect = element.getBoundingClientRect()
+                      const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+                      const elementTop = rect.top + scrollTop
+                      const offsetPosition = Math.max(0, elementTop - headerHeight)
+
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      })
+                    }
+
                     // Re-enable scroll detection after scrolling completes
                     setTimeout(() => {
                       isManualNavigationRef.current = false
@@ -515,7 +549,7 @@ export function Navbar() {
                   }
                 }
               }
-              
+
               return (
                 <a
                   key={link.href}
@@ -531,6 +565,7 @@ export function Navbar() {
                         : 'text-muted hover:text-accent-yellow'
                   )}
                   onClick={handleClick}
+                  aria-label={link.label}
                 >
                   {link.label}
                   {/* Yellow underline for all active sections */}
@@ -538,13 +573,13 @@ export function Navbar() {
                     <motion.span
                       layoutId="activeIndicator"
                       className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
-                      style={{ 
+                      style={{
                         background: `linear-gradient(90deg, var(--color-accent-yellow), color-mix(in srgb, var(--color-accent-yellow) 30%, #fff))`
                       }}
                       initial={false}
-                      transition={{ 
-                        type: 'spring', 
-                        stiffness: 380, 
+                      transition={{
+                        type: 'spring',
+                        stiffness: 380,
                         damping: 30,
                         duration: 0.2
                       }}
@@ -588,7 +623,7 @@ export function Navbar() {
                 }}
                 onClick={() => setIsOpen(false)}
               />
-              
+
               {/* Mobile menu - solid overlay window */}
               <motion.div
                 id="mobile-menu-overlay"
@@ -615,122 +650,142 @@ export function Navbar() {
                 }}
                 className="md:hidden pb-4"
               >
-            <div className="flex flex-col gap-1 pt-2">
-              {navLinks.map((link) => {
-                const sectionId = link.href.startsWith('#') ? link.href.substring(1) : ''
-                // Check if it's a hash link and active section matches
-                const isHashActive = link.href.startsWith('#') && activeSection === sectionId
-                // Check if it's a route link and pathname matches
-                const isRouteActive = !link.href.startsWith('#') && pathname === link.href
-                // Link is active if either condition is true
-                const isActive = isHashActive || isRouteActive
-                
-                // If we're not on home page and link is a hash link, prepend '/' to navigate to home first
-                const href = link.href.startsWith('#') && pathname !== '/' 
-                  ? `/${link.href}` 
-                  : link.href
-                
-                const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-                  e.preventDefault()
-                  
-                  // If navigating to resume page, store current section for back navigation
-                  if (link.href === '/resume' && pathname === '/') {
-                    // Store current active section or hash
-                    const currentHash = window.location.hash || `#${activeSection || 'hero'}`
-                    sessionStorage.setItem('previousSection', currentHash)
-                    setIsOpen(false)
-                    // Clear any hash from URL before navigating to prevent redirect issues
-                    if (window.location.hash) {
-                      window.history.replaceState(null, '', window.location.pathname)
-                    }
-                    // Navigate directly to resume page
-                    router.push('/resume')
-                    return
-                  }
-                  
-                  // If navigating from another page to a hash link, ensure proper navigation
-                  if (link.href.startsWith('#') && pathname !== '/') {
-                    // Disable scroll restoration to prevent scroll to top
-                    if ('scrollRestoration' in window.history) {
-                      window.history.scrollRestoration = 'manual'
-                    }
-                    setIsOpen(false)
-                    // Wait for menu to close and body to unlock before navigating
-                    setTimeout(() => {
-                      router.push(href)
-                    }, 100)
-                    return
-                  }
-                  
-                  // If already on home page, handle smooth scroll
-                  if (link.href.startsWith('#')) {
-                    const sectionId = link.href.substring(1)
-                    const element = document.getElementById(sectionId)
-                    
-                    if (element) {
-                      // Update active section immediately
-                      setActiveSection(sectionId)
-                      
-                      // Set manual navigation flag to prevent scroll handler from interfering
-                      isManualNavigationRef.current = true
-                      
-                      // Calculate target position BEFORE closing menu
-                      // Get element's absolute position in the document
-                      const headerHeight = 64
-                      let elementDocumentTop = 0
-                      let currentElement: HTMLElement | null = element
-                      
-                      // Calculate absolute offsetTop from document root
-                      while (currentElement) {
-                        elementDocumentTop += currentElement.offsetTop
-                        currentElement = currentElement.offsetParent as HTMLElement | null
+                <div className="flex flex-col gap-1 pt-2">
+                  {navLinks.map((link) => {
+                    const sectionId = link.href.startsWith('#') ? link.href.substring(1) : ''
+                    // Check if it's a hash link and active section matches
+                    const isHashActive = link.href.startsWith('#') && activeSection === sectionId
+                    // Check if it's a route link and pathname matches
+                    const isRouteActive = !link.href.startsWith('#') && pathname === link.href
+                    // Link is active if either condition is true
+                    const isActive = isHashActive || isRouteActive
+
+                    // If we're not on home page and link is a hash link, prepend '/' to navigate to home first
+                    const href = link.href.startsWith('#') && pathname !== '/'
+                      ? `/${link.href}`
+                      : link.href
+
+                    const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+                      // If navigating to resume page
+                      if (link.href === '/resume') {
+                        // If we are on the home page, store current section
+                        if (pathname === '/') {
+                          const currentHash = window.location.hash || `#${activeSection || 'hero'}`
+                          sessionStorage.setItem('previousSection', currentHash)
+                        }
+
+                        // Close menu
+                        setIsOpen(false)
+
+                        // Allow standard navigation to proceed
+                        return
                       }
-                      
-                      const targetScrollPosition = Math.max(0, elementDocumentTop - headerHeight)
-                      
-                      // Close menu first
-                      setIsOpen(false)
-                      
-                      // Wait longer for body to fully restore before scrolling
-                      // This ensures scroll position is restored before we initiate smooth scroll
-                      setTimeout(() => {
-                        // Update URL hash without triggering scroll
-                        window.history.pushState(null, '', link.href)
-                        
-                        // Now scroll to target position
-                        window.scrollTo({
-                          top: targetScrollPosition,
-                          behavior: 'smooth'
-                        })
-                        
-                        // Re-enable scroll detection after scrolling completes
+
+                      e.preventDefault()
+
+                      // If navigating from another page to a hash link, ensure proper navigation
+                      if (link.href.startsWith('#') && pathname !== '/') {
+                        // Disable scroll restoration to prevent scroll to top
+                        if ('scrollRestoration' in window.history) {
+                          window.history.scrollRestoration = 'manual'
+                        }
+                        setIsOpen(false)
+                        // Wait for menu to close and body to unlock before navigating
                         setTimeout(() => {
-                          isManualNavigationRef.current = false
-                        }, 1000)
-                      }, 150)
+                          router.push(href)
+                        }, 100)
+                        return
+                      }
+
+                      // If already on home page, handle smooth scroll
+                      if (link.href.startsWith('#')) {
+                        const sectionId = link.href.substring(1)
+                        const element = document.getElementById(sectionId)
+
+                        if (element) {
+                          // Update active section immediately
+                          setActiveSection(sectionId)
+
+                          // Update active section immediately
+                          setActiveSection(sectionId)
+
+                          // Set flags
+                          isManualNavigationRef.current = true
+                          isNavigatingRef.current = true
+
+                          // Close menu first - this will trigger scroll lock cleanup
+                          // The cleanup will handle restoring to the current position synchronously
+                          setIsOpen(false)
+
+                          // Use a small timeout to ensure the body styles have been cleared
+                          // and the browser has processed the layout change
+                          setTimeout(() => {
+                            // Calculate target position
+                            let targetScrollPosition = 0
+                            if (sectionId === 'hero') {
+                              targetScrollPosition = 0
+                            } else {
+                              const headerHeight = 64
+                              // Use offsetTop calculation which works regardless of viewport position
+                              // This gives us absolute position from document top
+                              let elementTop = 0
+                              let currentEl: HTMLElement | null = element
+                              while (currentEl) {
+                                elementTop += currentEl.offsetTop
+                                currentEl = currentEl.offsetParent as HTMLElement | null
+                              }
+                              targetScrollPosition = Math.max(0, elementTop - headerHeight)
+                            }
+
+                            // Update URL hash without triggering scroll
+                            window.history.pushState(null, '', link.href)
+
+                            // CRITICAL: Handle the scroll sequence manually
+                            const html = document.documentElement
+                            const originalScrollBehavior = html.style.scrollBehavior
+
+                            // The cleanup has already restored us to the current position
+                            // Now we just need to smooth scroll to the target
+
+                            requestAnimationFrame(() => {
+                              html.style.scrollBehavior = 'smooth'
+                              window.scrollTo({
+                                top: targetScrollPosition,
+                                behavior: 'smooth'
+                              })
+
+                              // Cleanup
+                              setTimeout(() => {
+                                html.style.scrollBehavior = originalScrollBehavior
+                                isManualNavigationRef.current = false
+                                isNavigatingRef.current = false
+                              }, 1000)
+                            })
+                          }, 50) // 50ms delay to allow DOM to settle after menu close
+                        }
+                      }
                     }
-                  }
-                }
-                
-                return (
-                  <a
-                    key={link.href}
-                    href={href}
-                    className={cn(
-                      'px-4 py-3 text-sm font-medium rounded-md transition-colors duration-160 min-h-[44px]',
-                      isActive
-                        ? 'text-accent-yellow bg-accent-yellow/10 font-semibold'
-                        : isDarkSection
-                          ? 'text-text/90 hover:text-accent-yellow hover:bg-surface/50'
-                          : 'text-muted hover:text-accent-yellow hover:bg-surface'
-                    )}
-                    onClick={handleClick}
-                  >
-                    {link.label}
-                  </a>
-                )
-              })}
-              </div>
+
+                    return (
+                      <a
+                        key={link.href}
+                        href={href}
+                        className={cn(
+                          'px-4 py-3 text-sm font-medium rounded-md transition-colors duration-160 min-h-[44px]',
+                          isActive
+                            ? 'text-accent-yellow bg-accent-yellow/10 font-semibold'
+                            : isDarkSection
+                              ? 'text-text/90 hover:text-accent-yellow hover:bg-surface/50'
+                              : 'text-muted hover:text-accent-yellow hover:bg-surface'
+                        )}
+                        onClick={handleClick}
+                        aria-label={link.label}
+                      >
+                        {link.label}
+                      </a>
+                    )
+                  })}
+                </div>
               </motion.div>
             </>
           )}
@@ -739,4 +794,3 @@ export function Navbar() {
     </motion.nav>
   )
 }
-

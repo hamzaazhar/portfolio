@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { MetricCard } from './MetricCardEnhanced'
-import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { getMotionProps, MOTION } from '@/lib/motion'
 
@@ -258,8 +257,35 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
           }}
           className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-5 md:pt-6"
         >
-          <Link
+          <a
             href={ctas.primary.href}
+            onClick={(e) => {
+              if (ctas.primary.href.startsWith('#')) {
+                e.preventDefault()
+                const sectionId = ctas.primary.href.substring(1)
+                const element = document.getElementById(sectionId)
+                if (element) {
+                  // Special handling for hero section
+                  if (sectionId === 'hero') {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth'
+                    })
+                  } else {
+                    const headerHeight = 64
+                    const rect = element.getBoundingClientRect()
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+                    const elementTop = rect.top + scrollTop
+                    const offsetPosition = Math.max(0, elementTop - headerHeight)
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    })
+                  }
+                  window.history.pushState(null, '', ctas.primary.href)
+                }
+              }
+            }}
             className={cn(
               'inline-flex items-center justify-center px-10 py-4 rounded-xl',
               'bg-accent text-text font-bold text-lg',
@@ -267,11 +293,39 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
               'min-h-[52px] min-w-[220px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
             )}
+            aria-label={ctas.primary.text}
           >
             {ctas.primary.text}
-          </Link>
-          <Link
+          </a>
+          <a
             href={ctas.secondary.href}
+            onClick={(e) => {
+              if (ctas.secondary.href.startsWith('#')) {
+                e.preventDefault()
+                const sectionId = ctas.secondary.href.substring(1)
+                const element = document.getElementById(sectionId)
+                if (element) {
+                  // Special handling for hero section
+                  if (sectionId === 'hero') {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: 'smooth'
+                    })
+                  } else {
+                    const headerHeight = 64
+                    const rect = element.getBoundingClientRect()
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+                    const elementTop = rect.top + scrollTop
+                    const offsetPosition = Math.max(0, elementTop - headerHeight)
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    })
+                  }
+                  window.history.pushState(null, '', ctas.secondary.href)
+                }
+              }
+            }}
             className={cn(
               'inline-flex items-center justify-center px-10 py-4 rounded-xl',
               'border border-text/80 text-text font-bold text-lg',
@@ -279,9 +333,10 @@ export function HeroGrid({ name, headline, subhead, microProof, metrics, ctas }:
               'min-h-[52px] min-w-[220px]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
             )}
+            aria-label={ctas.secondary.text}
           >
             {ctas.secondary.text}
-          </Link>
+          </a>
         </motion.div>
       </div>
     </div>

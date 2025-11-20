@@ -221,6 +221,7 @@ export function ContactForm({ email, linkedin }: ContactFormProps) {
             'flex items-center justify-center gap-2',
             'min-h-[44px]'
           )}
+          aria-label={status === 'submitting' ? 'Sending message' : 'Send message'}
         >
           {status === 'submitting' ? (
             <>
