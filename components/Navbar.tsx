@@ -358,107 +358,98 @@ export function Navbar() {
     }
   }, [isOpen, pathname])
 
-  // Enhanced scroll lock for mobile menu - comprehensive cross-platform solution
+  // Enhanced scroll lock for mobile menu - iOS-safe approach
   useEffect(() => {
+    if (!isOpen) return
+
     const body = document.body
     const html = document.documentElement
-    let scrollY = 0
+    
+    // Store current scroll position BEFORE any changes
+    const scrollY = getScrollPosition()
+    storedScrollYRef.current = scrollY
 
-    if (isOpen) {
-      // Store current scroll position BEFORE fixing body
-      scrollY = getScrollPosition()
-      storedScrollYRef.current = scrollY
+    // Store original styles to restore later
+    const originalBodyOverflow = body.style.overflow
+    const originalBodyPosition = body.style.position
+    const originalBodyTop = body.style.top
+    const originalBodyWidth = body.style.width
+    const originalBodyHeight = body.style.height
+    const originalHtmlOverflow = html.style.overflow
+    const originalHtmlHeight = html.style.height
 
-      // Store original styles to restore later
-      const originalBodyStyle = {
-        position: body.style.position,
-        top: body.style.top,
-        left: body.style.left,
-        right: body.style.right,
-        width: body.style.width,
-        overflow: body.style.overflow,
-        touchAction: body.style.touchAction,
-        paddingRight: body.style.paddingRight,
-      }
+    // Detect iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
-      const originalHtmlStyle = {
-        overflow: html.style.overflow,
-        overscrollBehavior: html.style.overscrollBehavior,
-      }
+    // Calculate scrollbar width to prevent layout shift (non-iOS)
+    const scrollbarWidth = !isIOS ? window.innerWidth - document.documentElement.clientWidth : 0
 
-      // Calculate scrollbar width to prevent layout shift
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
-
-      // Apply comprehensive scroll lock
+    if (isIOS) {
+      // iOS-specific: Use overflow hidden on html/body without position fixed
+      // This prevents the black screen issue while still locking scroll
+      html.style.overflow = 'hidden'
+      html.style.height = '100%'
+      body.style.overflow = 'hidden'
+      body.style.position = 'relative'
+      body.style.width = '100%'
+      body.style.height = '100%'
+      // Prevent iOS bounce scrolling
+      body.style.touchAction = 'none'
+      // Use webkit-specific property for smooth scrolling
+      ;(body.style as any).webkitOverflowScrolling = 'touch'
+    } else {
+      // Non-iOS: Use position fixed approach (more reliable on desktop/Android)
       body.style.position = 'fixed'
       body.style.top = `-${scrollY}px`
       body.style.left = '0'
       body.style.right = '0'
       body.style.width = '100%'
       body.style.overflow = 'hidden'
-
+      html.style.overflow = 'hidden'
+      
       // Prevent scrollbar layout shift
       if (scrollbarWidth > 0) {
         body.style.paddingRight = `${scrollbarWidth}px`
       }
+    }
 
-      // Prevent iOS bounce scrolling and Android overscroll
-      body.style.touchAction = 'none'
-      html.style.overflow = 'hidden'
+    // Modern browsers overscroll behavior
+    if ('overscrollBehavior' in html.style) {
+      html.style.overscrollBehavior = 'contain'
+    }
 
-      // Modern browsers overscroll behavior
-      if ('overscrollBehavior' in html.style) {
-        html.style.overscrollBehavior = 'contain'
+    return () => {
+      // Restore all original styles
+      body.style.overflow = originalBodyOverflow
+      body.style.position = originalBodyPosition
+      body.style.top = originalBodyTop
+      body.style.width = originalBodyWidth
+      body.style.height = originalBodyHeight
+      body.style.paddingRight = ''
+      body.style.touchAction = ''
+      html.style.overflow = originalHtmlOverflow
+      html.style.height = originalHtmlHeight
+
+      // iOS specific cleanup
+      if (isIOS) {
+        ;(body.style as any).webkitOverflowScrolling = ''
       }
 
-      // Additional iOS Safari fixes
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        body.style.height = '100%'
-        // Use type assertion for webkit-specific property
-        ;(body.style as any).webkitOverflowScrolling = 'touch'
-      }
+      // Restore scroll position
+      // Use 'auto' behavior to bypass global CSS scroll-behavior: smooth
+      const originalScrollBehavior = html.style.scrollBehavior
+      html.style.scrollBehavior = 'auto'
 
-      return () => {
-        // Restore all original styles
-        Object.keys(originalBodyStyle).forEach(key => {
-          body.style[key as keyof typeof originalBodyStyle] = originalBodyStyle[key as keyof typeof originalBodyStyle]
+      // Restore scroll position immediately
+      window.scrollTo({ top: scrollY, behavior: 'auto' })
+
+      // Re-enable smooth scroll after a small delay
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          html.style.scrollBehavior = originalScrollBehavior
         })
-
-        Object.keys(originalHtmlStyle).forEach(key => {
-          html.style[key as keyof typeof originalHtmlStyle] = originalHtmlStyle[key as keyof typeof originalHtmlStyle]
-        })
-
-        // iOS specific cleanup
-        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-          body.style.height = ''
-          ;(body.style as any).webkitOverflowScrolling = ''
-        }
-
-        // Restore scroll position
-        // CRITICAL: Use 'auto' behavior to bypass global CSS scroll-behavior: smooth
-        // This prevents an animated jump from Hero when menu closes
-        // Always restore immediately to prevent a frame at scroll 0(flicker)
-        // Temporarily disable smooth scroll globally to ensure instant restoration
-        const originalScrollBehavior = html.style.scrollBehavior
-        html.style.scrollBehavior = 'auto'
-
-        // Restore immediately without requestAnimationFrame to prevent a frame at scroll 0
-        window.scrollTo({ top: scrollY, behavior: 'auto' })
-
-        // Re-enable smooth scroll after a small delay
-        // We use a double RAF to ensure the 'auto' scroll has been processed
-        if (typeof requestAnimationFrame !== 'undefined') {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              html.style.scrollBehavior = originalScrollBehavior
-            })
-          })
-        } else {
-          setTimeout(() => {
-            html.style.scrollBehavior = originalScrollBehavior
-          }, 50)
-        }
-      }
+      })
     }
   }, [isOpen])
 
@@ -695,26 +686,31 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop overlay - solid dark background */}
+            {/* Backdrop overlay - solid dark background - iOS-safe viewport */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="fixed z-40 md:hidden"
+              className="fixed md:hidden"
               style={{
                 top: '64px', // Start below the navbar (h-16 = 64px)
                 left: 0,
                 right: 0,
                 bottom: 0,
-                background: 'rgba(0, 0, 0, 0.6)',
+                // Use dynamic viewport height for iOS compatibility
+                minHeight: 'calc(100dvh - 64px)',
+                height: 'calc(100dvh - 64px)',
+                // Ensure backdrop is above page content but below menu
+                zIndex: 50,
+                background: 'rgba(0, 0, 0, 0.75)',
                 backdropFilter: 'blur(9px)',
                 WebkitBackdropFilter: 'blur(9px)'
               }}
               onClick={() => setIsOpen(false)}
             />
 
-            {/* Mobile menu - solid overlay window */}
+            {/* Mobile menu - solid overlay window - iOS-safe viewport */}
             <motion.div
               key="mobile-menu-overlay"
               initial={{ scaleY: 0, transformOrigin: 'top' }}
@@ -726,8 +722,12 @@ export function Navbar() {
                 top: '64px',
                 left: 0,
                 right: 0,
+                // Use max-height with dynamic viewport for iOS compatibility
+                maxHeight: 'calc(100dvh - 64px)',
+                minHeight: 'auto',
                 height: 'auto',
-                zIndex: 99999,
+                // Menu should be above backdrop but reasonable z-index
+                zIndex: 60,
                 backgroundColor: 'var(--bg)',
                 borderBottom: '1px solid var(--border)',
                 borderBottomLeftRadius: '16px',
@@ -736,7 +736,10 @@ export function Navbar() {
                 opacity: 1,
                 visibility: 'visible',
                 display: 'block',
-                isolation: 'isolate'
+                isolation: 'isolate',
+                // Ensure proper overflow handling
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch'
               }}
               className="md:hidden pb-4"
             >
